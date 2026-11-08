@@ -184,6 +184,18 @@
       "created_at": "2026-11-08T23:56:04.774Z",
       "sender": "ios",
       "is_cancelled": false
+    },
+    {
+      "id": "f1b33cd8-3610-4d79-a69c-d7986f116f9f",
+      "role": "agent",
+      "content": "**¡Sí! Ya tienes disponible el APK para descargar e instalar en tu móvil Android.**\n\nHe preparado dos versiones listas para probar:\n\n---\n\n### 📲 Enlaces de Descarga Directa\n\n1. **[Descargar Football-Cards-Godot-3D.apk](https://github.com/pabloprietorecio-afk/Football-Cards-Godot/releases/download/v1.0.0-preview/Football-Cards-Godot-3D.apk)** *(28 MB)*\n   * **Versión nativa Godot 4:** Prototipo 3D táctil de tanda de penaltis con física de disparo, animaciones de parada del portero y renderizado optimizado para móviles (`gl_compatibility`).\n\n2. **[Descargar Football-Cards-Classic.apk](https://github.com/pabloprietorecio-afk/Football-Cards-Godot/releases/download/v1.0.0-preview/Football-Cards-Classic.apk)** *(18 MB)*\n   * **Versión completa clásica:** Modo Liga, alineaciones, vestuario, mercado y catálogo completo de cartas.\n\nTambién puedes descargarlo directamente con un solo toque desde la web del proyecto:\n👉 **[Abrir sitio web y pulsar en «Descargar APK»](https://antigravity.luch.dev/site/f1b6d200-17fa-4df3-9fdc-338177f7fcfb/4e8ba5675b382277067bb34b/)**\n\nO consultar la publicación oficial en GitHub:\n📦 **[GitHub Releases: v1.0.0-preview](https://github.com/pabloprietorecio-afk/Football-Cards-Godot/releases/tag/v1.0.0-preview)**\n\n---\n\n### 📋 Cómo instalarlo en tu móvil\n\n1. Descarga el archivo `.apk` desde cualquiera de los enlaces anteriores directamente en tu teléfono.\n2. Pulsa sobre el archivo descargado (en las notificaciones o en la carpeta *Descargas*).\n3. Si el sistema te lo solicita, activa la opción **«Permitir desde esta fuente»** o *«Instalar aplicaciones desconocidas»* para tu navegador o gestor de archivos.\n4. Pulsa en **Instalar** y ¡listo para probar!",
+      "status": "completed",
+      "model": "gemini-3.8-flash-high",
+      "client_type": "gemini-bridge",
+      "parent_message_id": "48d22d76-0d35-4576-b5fd-9060e4a1a273",
+      "created_at": "2026-11-08T23:57:51.789Z",
+      "sender": "macOS",
+      "is_cancelled": false
     }
   ]
 }

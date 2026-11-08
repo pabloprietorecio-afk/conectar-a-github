@@ -1,0 +1,148 @@
+{
+  "pase_magistral": {
+    "name": "Pase Magistral",
+    "roles": [
+      "atk"
+    ],
+    "text": "Tu pase no puede ser interceptado por posición o corte."
+  },
+  "amarilla": {
+    "name": "Tarjeta amarilla",
+    "roles": [],
+    "pre": true,
+    "ref": true,
+    "icon": "amarilla",
+    "short": "Amonesta al que te hace falta",
+    "text": "Cuando el rival te hace una falta, se la puedes sacar al infractor: queda amonestado (−1 en sus entradas, persecuciones y faltas) y con una segunda amarilla, a la calle."
+  },
+  "roja": {
+    "name": "Tarjeta roja",
+    "roles": [],
+    "pre": true,
+    "ref": true,
+    "icon": "roja",
+    "short": "Expulsa al que te hace falta grave",
+    "text": "Ante una falta GRAVE del rival (entrada muy temeraria, en el área o cortando una ocasión clara), expulsas al infractor: su equipo juega con uno menos. Al portero no se le puede expulsar."
+  },
+  "pausa": {
+    "name": "La Pausa",
+    "roles": [
+      "atk"
+    ],
+    "pre": true,
+    "short": "La defensa declara primero",
+    "text": "Con el balón en tus pies y antes de declarar, obligas a la defensa rival a declarar primero (enseña su jugada y su carta). Después decides tú."
+  },
+  "aficion": {
+    "name": "Afición",
+    "roles": [
+      "atk",
+      "def"
+    ],
+    "text": "+3 a tu acción."
+  },
+  "cansancio": {
+    "name": "Cansancio",
+    "roles": [
+      "atk",
+      "def"
+    ],
+    "text": "−3 a la acción del rival."
+  },
+  "lesion": {
+    "name": "Lesión Leve",
+    "roles": [
+      "atk",
+      "def"
+    ],
+    "text": "El rival descarta una carta al azar."
+  },
+  "entrada_perfecta": {
+    "name": "Entrada Perfecta",
+    "roles": [
+      "def"
+    ],
+    "text": "+4 a tu entrada y ganas los empates."
+  },
+  "contraataque": {
+    "name": "Contraataque",
+    "roles": [
+      "def"
+    ],
+    "text": "Si recuperas el balón, sales corriendo 14 metros."
+  },
+  "var": {
+    "name": "VAR",
+    "roles": [
+      "def"
+    ],
+    "text": "Anula un gol rival (solo se gasta si hay gol)."
+  },
+  "trebol": {
+    "name": "Trébol",
+    "roles": [
+      "atk",
+      "def"
+    ],
+    "text": "Tiras la suerte dos veces y te quedas con la mejor."
+  },
+  "gafe": {
+    "name": "Gafe",
+    "roles": [
+      "atk",
+      "def"
+    ],
+    "text": "El rival tira la suerte dos veces y se queda con la peor."
+  },
+  "moneda": {
+    "name": "Cara o Cruz",
+    "roles": [
+      "atk",
+      "def"
+    ],
+    "text": "El duelo se decide a cara o cruz, sin mirar los valores."
+  },
+  "misil": {
+    "name": "Misil",
+    "roles": [
+      "atk"
+    ],
+    "super": true,
+    "need": "tiro",
+    "short": "Golazo desde lejos: sin penalización ni tiro fuera, +2",
+    "icon": "disparo",
+    "text": "Chutazo imparable: sin penalización por distancia ni riesgo de irse fuera, y +3. Golazos desde lejos."
+  },
+  "paradon": {
+    "name": "Paradón",
+    "roles": [
+      "def"
+    ],
+    "super": true,
+    "short": "Portero +6 y anula la carta de Disparo rival",
+    "icon": "cobertura",
+    "text": "Tu portero suma +6, gana los empates, atrapa el balón (sin rechace) y la carta de Disparo del rival no cuenta. Solo se gasta si el rival chuta."
+  },
+  "turbo": {
+    "name": "Súper velocidad",
+    "roles": [
+      "atk",
+      "def"
+    ],
+    "super": true,
+    "short": "Tu futbolista corre un 40 % más rápido",
+    "icon": "carrera",
+    "text": "Tu futbolista corre un 40 % más rápido en esta jugada: llega antes al balón suelto, recorre más y le cuesta más que le alcancen."
+  },
+  "elastica": {
+    "name": "La Elástica",
+    "roles": [
+      "atk"
+    ],
+    "super": true,
+    "need": "regate",
+    "short": "Regate imposible: +6 y gana empates",
+    "icon": "regate",
+    "text": "Regate imposible: +6 y ganas los empates."
+  }
+}

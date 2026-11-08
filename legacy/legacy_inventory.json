@@ -1,0 +1,8 @@
+{
+  "ACTIONS": true,
+  "SPECIALS": true,
+  "CFG": true,
+  "CARD_TYPES": true,
+  "COMPOSITION": true,
+  "POWER": true
+}

@@ -1,0 +1,377 @@
+{
+  "bedA": {
+    "file": "bedA.mp3",
+    "bytes": 120240,
+    "format": "mp3"
+  },
+  "bedB": {
+    "file": "bedB.mp3",
+    "bytes": 120240,
+    "format": "mp3"
+  },
+  "hype": {
+    "file": "hype.mp3",
+    "bytes": 60240,
+    "format": "mp3"
+  },
+  "chant1": {
+    "file": "chant1.mp3",
+    "bytes": 81240,
+    "format": "mp3"
+  },
+  "chant2": {
+    "file": "chant2.mp3",
+    "bytes": 84240,
+    "format": "mp3"
+  },
+  "chant3": {
+    "file": "chant3.mp3",
+    "bytes": 61320,
+    "format": "mp3"
+  },
+  "chant4": {
+    "file": "chant4.mp3",
+    "bytes": 78840,
+    "format": "mp3"
+  },
+  "goal1": {
+    "file": "goal1.mp3",
+    "bytes": 53280,
+    "format": "mp3"
+  },
+  "goal2": {
+    "file": "goal2.mp3",
+    "bytes": 53280,
+    "format": "mp3"
+  },
+  "goal3": {
+    "file": "goal3.mp3",
+    "bytes": 43800,
+    "format": "mp3"
+  },
+  "roar1": {
+    "file": "roar1.mp3",
+    "bytes": 34800,
+    "format": "mp3"
+  },
+  "roar2": {
+    "file": "roar2.mp3",
+    "bytes": 24240,
+    "format": "mp3"
+  },
+  "surge": {
+    "file": "surge.mp3",
+    "bytes": 43800,
+    "format": "mp3"
+  },
+  "ooh1": {
+    "file": "ooh1.mp3",
+    "bytes": 25320,
+    "format": "mp3"
+  },
+  "ooh2": {
+    "file": "ooh2.mp3",
+    "bytes": 17280,
+    "format": "mp3"
+  },
+  "gasp": {
+    "file": "gasp.mp3",
+    "bytes": 13320,
+    "format": "mp3"
+  },
+  "groan1": {
+    "file": "groan1.mp3",
+    "bytes": 10320,
+    "format": "mp3"
+  },
+  "groan2": {
+    "file": "groan2.mp3",
+    "bytes": 15720,
+    "format": "mp3"
+  },
+  "groan3": {
+    "file": "groan3.mp3",
+    "bytes": 11040,
+    "format": "mp3"
+  },
+  "boo1": {
+    "file": "boo1.mp3",
+    "bytes": 8280,
+    "format": "mp3"
+  },
+  "boo2": {
+    "file": "boo2.mp3",
+    "bytes": 6840,
+    "format": "mp3"
+  },
+  "boo3": {
+    "file": "boo3.mp3",
+    "bytes": 6840,
+    "format": "mp3"
+  },
+  "booW": {
+    "file": "booW.mp3",
+    "bytes": 15240,
+    "format": "mp3"
+  },
+  "clap1": {
+    "file": "clap1.mp3",
+    "bytes": 22800,
+    "format": "mp3"
+  },
+  "clap2": {
+    "file": "clap2.mp3",
+    "bytes": 15240,
+    "format": "mp3"
+  },
+  "cheer1": {
+    "file": "cheer1.mp3",
+    "bytes": 28800,
+    "format": "mp3"
+  },
+  "cheer2": {
+    "file": "cheer2.mp3",
+    "bytes": 17880,
+    "format": "mp3"
+  },
+  "cheer3": {
+    "file": "cheer3.mp3",
+    "bytes": 17880,
+    "format": "mp3"
+  },
+  "cheerW": {
+    "file": "cheerW.mp3",
+    "bytes": 30360,
+    "format": "mp3"
+  },
+  "whis": {
+    "file": "whis.mp3",
+    "bytes": 10657,
+    "format": "mp3"
+  },
+  "whis2": {
+    "file": "whis2.mp3",
+    "bytes": 10240,
+    "format": "mp3"
+  },
+  "kick1": {
+    "file": "kick1.mp3",
+    "bytes": 2716,
+    "format": "mp3"
+  },
+  "kick2": {
+    "file": "kick2.mp3",
+    "bytes": 3761,
+    "format": "mp3"
+  },
+  "net": {
+    "file": "net.mp3",
+    "bytes": 8359,
+    "format": "mp3"
+  },
+  "post": {
+    "file": "post.mp3",
+    "bytes": 14001,
+    "format": "mp3"
+  },
+  "glove": {
+    "file": "glove.mp3",
+    "bytes": 4388,
+    "format": "mp3"
+  },
+  "fall": {
+    "file": "fall.mp3",
+    "bytes": 7523,
+    "format": "mp3"
+  },
+  "traffic": {
+    "file": "traffic.mp3",
+    "bytes": 72192,
+    "format": "mp3"
+  },
+  "highway": {
+    "file": "highway.mp3",
+    "bytes": 66624,
+    "format": "mp3"
+  },
+  "horn1": {
+    "file": "horn1.mp3",
+    "bytes": 9822,
+    "format": "mp3"
+  },
+  "horn2": {
+    "file": "horn2.mp3",
+    "bytes": 4388,
+    "format": "mp3"
+  },
+  "chat1": {
+    "file": "chat1.mp3",
+    "bytes": 32256,
+    "format": "mp3"
+  },
+  "chat2": {
+    "file": "chat2.mp3",
+    "bytes": 32256,
+    "format": "mp3"
+  },
+  "bark1": {
+    "file": "bark1.mp3",
+    "bytes": 6240,
+    "format": "mp3"
+  },
+  "bark2": {
+    "file": "bark2.mp3",
+    "bytes": 5280,
+    "format": "mp3"
+  },
+  "bark3": {
+    "file": "bark3.mp3",
+    "bytes": 5280,
+    "format": "mp3"
+  },
+  "bark4": {
+    "file": "bark4.mp3",
+    "bytes": 4800,
+    "format": "mp3"
+  },
+  "step1": {
+    "file": "step1.mp3",
+    "bytes": 3970,
+    "format": "mp3"
+  },
+  "step2": {
+    "file": "step2.mp3",
+    "bytes": 3970,
+    "format": "mp3"
+  },
+  "step3": {
+    "file": "step3.mp3",
+    "bytes": 3970,
+    "format": "mp3"
+  },
+  "lock1": {
+    "file": "lock1.mp3",
+    "bytes": 4806,
+    "format": "mp3"
+  },
+  "lock2": {
+    "file": "lock2.mp3",
+    "bytes": 7314,
+    "format": "mp3"
+  },
+  "lock3": {
+    "file": "lock3.mp3",
+    "bytes": 9613,
+    "format": "mp3"
+  },
+  "door": {
+    "file": "door.mp3",
+    "bytes": 10657,
+    "format": "mp3"
+  },
+  "creak": {
+    "file": "creak.mp3",
+    "bytes": 20280,
+    "format": "mp3"
+  },
+  "keys": {
+    "file": "keys.mp3",
+    "bytes": 3552,
+    "format": "mp3"
+  },
+  "bounce": {
+    "file": "bounce.mp3",
+    "bytes": 3970,
+    "format": "mp3"
+  },
+  "buzz": {
+    "file": "buzz.mp3",
+    "bytes": 16224,
+    "format": "mp3"
+  },
+  "cityDay": {
+    "file": "cityDay.mp3",
+    "bytes": 120192,
+    "format": "mp3"
+  },
+  "moped": {
+    "file": "moped.mp3",
+    "bytes": 20160,
+    "format": "mp3"
+  },
+  "horn3": {
+    "file": "horn3.mp3",
+    "bytes": 10240,
+    "format": "mp3"
+  },
+  "siren": {
+    "file": "siren.mp3",
+    "bytes": 31008,
+    "format": "mp3"
+  },
+  "murmur": {
+    "file": "murmur.mp3",
+    "bytes": 82272,
+    "format": "mp3"
+  },
+  "cough1": {
+    "file": "cough1.mp3",
+    "bytes": 5040,
+    "format": "mp3"
+  },
+  "cough2": {
+    "file": "cough2.mp3",
+    "bytes": 7320,
+    "format": "mp3"
+  },
+  "cough3": {
+    "file": "cough3.mp3",
+    "bytes": 8760,
+    "format": "mp3"
+  },
+  "cough4": {
+    "file": "cough4.mp3",
+    "bytes": 10560,
+    "format": "mp3"
+  },
+  "cough5": {
+    "file": "cough5.mp3",
+    "bytes": 5280,
+    "format": "mp3"
+  },
+  "cough6": {
+    "file": "cough6.mp3",
+    "bytes": 10560,
+    "format": "mp3"
+  },
+  "booL": {
+    "file": "booL.mp3",
+    "bytes": 40320,
+    "format": "mp3"
+  },
+  "whis3": {
+    "file": "whis3.mp3",
+    "bytes": 4388,
+    "format": "mp3"
+  },
+  "pre1": {
+    "file": "pre1.mp3",
+    "bytes": 78336,
+    "format": "mp3"
+  },
+  "pre2": {
+    "file": "pre2.mp3",
+    "bytes": 78336,
+    "format": "mp3"
+  },
+  "preroar": {
+    "file": "preroar.mp3",
+    "bytes": 31536,
+    "format": "mp3"
+  },
+  "oehh": {
+    "file": "oehh.mp3",
+    "bytes": 56160,
+    "format": "mp3"
+  }
+}

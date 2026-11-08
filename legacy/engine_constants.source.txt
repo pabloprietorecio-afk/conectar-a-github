@@ -1,0 +1,140 @@
+const FIELD = { W: 64, L: 100, GX: 32, GOAL_HALF: 6 };
+
+const CFG = {
+  base: 4, // nivel de todos los jugadores
+  luck: 8, // (v3) ya no se usa: la suerte son dos dados de seis caras
+  diceN: 2, diceF: 6, // la suerte: cada bando tira dos dados de seis caras (2 a 12)
+  handSize: 5,
+  minutes: 90,
+  manoMin: 2, // minutos por mano (~40 manos por partido: con menos, los partidos acaban demasiado a menudo 0-0)
+  shotMin: 3, // minutos si la mano termina en tiro
+  cutBase: 7, // alcance base (m) para llegar a la trayectoria de un pase y cortarlo
+  stars: 2, starBonus: 4, // Genialidades por partido y su bonus
+  chainStep: 2, chainMax: 2, // cada 2 ataques seguidos con éxito: +1 a la fuerza de ataque (máx. +2)
+  contact: 7, // distancia de contacto para duelos de posición
+  tackleReach: 10, // alcance base de una entrada (+2 por punto de carta)
+  moveBase: 8, // metros base de carrera/persecución/desmarque (+3 por punto de carta)
+  movePer: 3,
+  passPen: 15, // -1 al pase por cada 15 m
+  centroPen: 25, // idem para el centro
+  shotFree: 12, // sin penalización de distancia hasta aquí (v5: la mayoría de goles, desde dentro del área)
+  shotPenDiv: 4, // -1 al tiro por cada 4 m más allá
+  offStart: 20, // desde esta distancia el tiro puede irse fuera
+  offSpan: 24, // probabilidad de ir fuera = (d - offStart) / offSpan (máx. offMax)
+  offMax: 0.92,
+  longFrom: 22, longDiv: 2.5, // desde 22 m, −1 más cada 2,5 m (los goles desde lejos son raros… salvo con Misil)
+  farFrom: 36, farMax: 0.985, // desde 36 m casi todo se va fuera
+  cardHalfFrom: 20, // desde 20 m la carta de Disparo vale la mitad (con Misil, entera)
+  boxBonus: 1, // tiro desde dentro del área: +1
+  gkMinus: 0, // el portero parte con este punto menos (v5: más goles cerca, los lejanos siguen siendo raros)
+  despReach: 12,
+  // --- v8: Despejar es una acción CON balón: lo manda largo, lejos de tu área, y es muy difícil de cortar ---
+  clearBonus: 3, // +3 al despeje (nadie corta un balón largo y alto con facilidad); con la iniciativa (+2) son +5 sobre un pase
+  clearDist: 32, // metros que viaja el despeje (32 a 42 hacia el campo rival)
+  clearMaxProg: 55, // solo se puede despejar con el balón en tu campo (hasta el 55 % del terreno)
+  clearCut: 0.6, // el alcance para cortarlo en el aire es un 60 % del de un corte normal
+  step: 9, // metros que se recolocan los jugadores sin acción
+  keeperStep: 3,
+  foulMargin: 6, // si la entrada pierde por esta diferencia, es falta
+  pressedPen: 2,
+  holdMargin: 3, // el portero blocó si gana por tanto
+  maxTurns: 160,
+  // --- v4: futbolistas reales ---
+  refSpeed: 33, // km/h de referencia: un jugador a 33 km/h recorre exactamente el alcance de la regla
+  ballSlow: 0.9, // con el balón en los pies se corre algo menos
+  // v13.2 · cansancio calibrado con 200 partidos entre bots (sin cambios): descanso ~73 % de media (el más cansado ~50 %),
+  // tras el descanso ~88 %, final ~59 % (1 o 2 por equipo por debajo del 35 %). Antes: 94 % al descanso y 91 % al final.
+  drain: 0.6, // energía que gasta cada metro de esprint (se multiplica por 1.45 − resistencia/100)
+  jogDrain: 0.12, // fracción del gasto cuando solo se recoloca trotando
+  baseDrain: 2.0, // energía que gasta cada mano todo el que está en el campo (× 1,45 − resistencia/100; × 90/minutos)
+  rec: 0.8, rec2: 0.6, // energía que recupera por mano quien no corre (1ª y 2ª parte)
+  halfRest: 15, // recuperación en el descanso
+  tired: 35, exhausted: 15, // por debajo: −1 / −2 en los duelos
+  extManos: 2, extNear: 30, // v14 · prolongación: tiradas de más y distancia (m) a la portería rival para concederla
+  tieDice: true, // v14 · empate a puntos en un lance: desempate a dados
+  varChance: 0.5, // el VAR anula el gol la mitad de las veces
+  starMax: 3, // al encajar un gol se gana una Genialidad (máximo 3)
+  pushFrom: 75, push: 1, // empuje final: desde el minuto 75 (en partidos de 40', desde el 33), el equipo que pierde suma +1 a sus ataques
+  saveCorner: 0.4, blockCorner: 0.35, // rechaces y bloqueos que acaban en córner
+  // --- v5 ---
+  looseTie: 0.3, // balón suelto: si uno llega más de 0,3 s antes, es suyo; si no, disputa cuerpo a cuerpo
+  anticip: 0.03, // cada punto de carta de Carrera/Persigue adelanta la salida 0,03 s (máx. 0,3 s con una +10)
+  gkHands: 0.25, // el portero dentro de su área puede usar las manos: le cuenta como 0,25 s de ventaja
+  turbo: 1.4, // súper velocidad: ×1,4 la velocidad punta en esa jugada
+  misilBonus: 2, paradonBonus: 6, elasticaBonus: 6,
+  superMargin: 4, // los bots solo gastan una súper si mejora mucho la jugada
+  atkBonus: 0, atkFirst: 2, atkFirstShot: 3, // v7: el que tiene el balón declara primero (enseña su jugada) y por eso suma +2 en sus duelos y +3 en el tiro (calibrado con 200 partidos simulados: mismos goles que antes)
+  homeBonus: 1, homeP: 0.5, // v9 · factor campo (Liga): +1 en la mitad de los duelos de ataque del local (600 partidos simulados: +3,4 puntos de victorias)
+  botClear: 0.9, // v8: los bots despejan con el balón pegado a su área (valor por % de terreno dentro del 34 % propio)
+  botPoss: 11, botTerr: 0.12, botThreat: 0.08, // valor de la posesión, del terreno y del peligro para los bots
+};
+
+// v12 · el empuje final escala con la duración: en un partido de 40' nunca se llegaba al minuto 75
+const pushFromNow = () => Math.round(CFG.pushFrom * CFG.minutes / 90);
+const ATTACK = ['pase', 'centro', 'carrera', 'regate', 'tiro', 'proteger', 'desmarque', 'despejar'];
+const DEFENSE = ['entrada', 'persigue', 'posicion', 'corte', 'falta'];
+
+// needs: qué hay que elegir en el campo.  card: tipo de carta que la refuerza.
+const ACTIONS = {
+  pase: { label: 'Pase', role: 'atk', card: 'pase', needs: 'mate', text: 'Pasa el balón a un compañero. Cuanto más lejos, más difícil.' },
+  centro: { label: 'Centro', role: 'atk', card: 'pase', needs: 'mate', text: 'Pase largo y aéreo a un compañero (se penaliza menos la distancia). Lo refuerzan cartas de Pase o de Despeje.' },
+  carrera: { label: 'Carrera', role: 'atk', card: 'carrera', needs: 'dest', text: 'Conduce el balón hacia un punto. Recorres más con una carta de Carrera.' },
+  regate: { label: 'Regate', role: 'atk', card: 'regate', needs: 'rival', text: 'Regatea al rival que te sale al paso (si hace entrada o posición, su carta cuenta).' },
+  tiro: { label: 'Tiro', role: 'atk', card: 'disparo', needs: 'none', text: 'Dispara a puerta. Cuanto más cerca, más probable el gol.' },
+  proteger: { label: 'Proteger', role: 'atk', card: 'regate', needs: 'none', text: 'Cubres el balón con el cuerpo: +2 contra una entrada. Lo refuerzan cartas de Regate o de Posición.' },
+  desmarque: { label: 'Desmarque', role: 'atk', card: 'carrera', needs: 'mate+dest', text: 'Un compañero sin balón se mueve a un hueco. El portador retiene el balón.' },
+  entrada: { label: 'Entrada', role: 'def', card: 'entrada', needs: 'player', text: 'Entras al jugador con el balón. Si pierdes por mucho, puede ser falta.' },
+  persigue: { label: 'Persigue', role: 'def', card: 'persigue', needs: 'player', text: 'Persigues al jugador con el balón y le presionas.' },
+  posicion: { label: 'Posición', role: 'def', card: 'posicion', needs: 'player+dest', text: 'Te colocas en un punto: frenas carreras y pases que pasen cerca. El portero suma la carta a la parada.' },
+  corte: { label: 'Corte', role: 'def', card: 'corte', needs: 'player+rival', text: 'Cortas el pase al rival que elijas.' },
+  despejar: { label: 'Despejar', role: 'atk', card: 'despeje', needs: 'none', text: 'Con el balón en tu campo, lo mandas largo y alto lejos de tu área para evitar el riesgo. Es muy difícil de cortar (+3), pero el balón queda suelto y empieza una carrera por él. Lo refuerza la carta Despeje.' },
+  falta: { label: 'Falta', role: 'def', card: null, needs: 'player', text: 'Haces falta táctica: paras la jugada pero regalas una falta (o penalti).' },
+  disputa: { label: 'Disputa', role: 'both', card: 'carrera', needs: 'player', text: 'Balón suelto: corres a por él (vale Carrera o Persigue).' },
+};
+
+const SPECIALS = {
+  pase_magistral: { name: 'Pase Magistral', roles: ['atk'], text: 'Tu pase no puede ser interceptado por posición o corte.' },
+  // v7: tarjetas. No acompañan a una acción: se sacan cuando el rival te hace falta (amarilla: leve o grave; roja: grave)
+  amarilla: { name: 'Tarjeta amarilla', roles: [], pre: true, ref: true, icon: 'amarilla', short: 'Amonesta al que te hace falta', text: 'Cuando el rival te hace una falta, se la puedes sacar al infractor: queda amonestado (−1 en sus entradas, persecuciones y faltas) y con una segunda amarilla, a la calle.' },
+  roja: { name: 'Tarjeta roja', roles: [], pre: true, ref: true, icon: 'roja', short: 'Expulsa al que te hace falta grave', text: 'Ante una falta GRAVE del rival (entrada muy temeraria, en el área o cortando una ocasión clara), expulsas al infractor: su equipo juega con uno menos. Al portero no se le puede expulsar.' },
+  // v7: se juega ANTES de declarar (no acompaña a una acción)
+  pausa: { name: 'La Pausa', roles: ['atk'], pre: true, short: 'La defensa declara primero', text: 'Con el balón en tus pies y antes de declarar, obligas a la defensa rival a declarar primero (enseña su jugada y su carta). Después decides tú.' },
+  aficion: { name: 'Afición', roles: ['atk', 'def'], text: '+3 a tu acción.' },
+  cansancio: { name: 'Cansancio', roles: ['atk', 'def'], text: '−3 a la acción del rival.' },
+  lesion: { name: 'Lesión Leve', roles: ['atk', 'def'], text: 'El rival descarta una carta al azar.' },
+  entrada_perfecta: { name: 'Entrada Perfecta', roles: ['def'], text: '+4 a tu entrada y ganas los empates.' },
+  contraataque: { name: 'Contraataque', roles: ['def'], text: 'Si recuperas el balón, sales corriendo 14 metros.' },
+  var: { name: 'VAR', roles: ['def'], text: 'Anula un gol rival (solo se gasta si hay gol).' },
+  trebol: { name: 'Trébol', roles: ['atk', 'def'], text: 'Tiras la suerte dos veces y te quedas con la mejor.' },
+  gafe: { name: 'Gafe', roles: ['atk', 'def'], text: 'El rival tira la suerte dos veces y se queda con la peor.' },
+  moneda: { name: 'Cara o Cruz', roles: ['atk', 'def'], text: 'El duelo se decide a cara o cruz, sin mirar los valores.' },
+  // v5 · cartas SÚPER: muy escasas y se agotan al usarlas (una vez por partido)
+  misil: { name: 'Misil', roles: ['atk'], super: true, need: 'tiro', short: 'Golazo desde lejos: sin penalización ni tiro fuera, +2', icon: 'disparo', text: 'Chutazo imparable: sin penalización por distancia ni riesgo de irse fuera, y +3. Golazos desde lejos.' },
+  paradon: { name: 'Paradón', roles: ['def'], super: true, short: 'Portero +6 y anula la carta de Disparo rival', icon: 'cobertura', text: 'Tu portero suma +6, gana los empates, atrapa el balón (sin rechace) y la carta de Disparo del rival no cuenta. Solo se gasta si el rival chuta.' },
+  turbo: { name: 'Súper velocidad', roles: ['atk', 'def'], super: true, short: 'Tu futbolista corre un 40 % más rápido', icon: 'carrera', text: 'Tu futbolista corre un 40 % más rápido en esta jugada: llega antes al balón suelto, recorre más y le cuesta más que le alcancen.' },
+  elastica: { name: 'La Elástica', roles: ['atk'], super: true, need: 'regate', short: 'Regate imposible: +6 y gana empates', icon: 'regate', text: 'Regate imposible: +6 y ganas los empates.' },
+};
+const SUPER_KEYS = Object.keys(SPECIALS).filter((k) => SPECIALS[k].super);
+
+// Qué cualidad del futbolista cuenta en cada acción (el resto lo deciden carta y suerte).
+const SKILL = { pase: 'PAS', centro: 'PAS', carrera: 'VEL', regate: 'REG', proteger: 'FIS', tiro: 'TIR', entrada: 'DEF', posicion: 'DEF', corte: 'DEF', despejar: 'FIS', persigue: 'VEL', disputa: 'FIS', portero: 'POR', regate_pasivo: 'DEF' };
+const qualOf = (v) => (v == null ? 0 : v >= 90 ? 2 : v >= 80 ? 1 : v >= 66 ? 0 : -1);
+
+// ---------- utilidades ----------
+function mulberry32(seed) {
+  let a = seed >>> 0;
+  const f = function () {
+    a = (a + 0x6d2b79f5) >>> 0;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+  f.state = () => a; // v9: el estado se guarda (partido a medias) y mulberry32(estado) lo continúa igual
+  return f;
+}
+function shuffle(arr, rng) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rng() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}

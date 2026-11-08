@@ -1,0 +1,436 @@
+{
+  "clubs": [
+    "Atlético Ribera",
+    "Deportivo Sierra",
+    "Real Olivar",
+    "CD Faro",
+    "Unión Puerto",
+    "Racing Vega",
+    "Sporting Alba",
+    "Club Brisa",
+    "Juventud Peñas",
+    "Celta Marea",
+    "Real Aurora",
+    "Atlético Mirador",
+    "CF Robledal",
+    "Unión Dehesa"
+  ],
+  "packs": {
+    "cartas": {
+      "name": "Sobre de cartas",
+      "price": 300000,
+      "desc": "5 cartas · al menos una Infrecuente o mejor",
+      "odds": {
+        "C": 44,
+        "U": 30,
+        "R": 16,
+        "E": 8,
+        "L": 2
+      },
+      "superP": 0.02
+    },
+    "premium": {
+      "name": "Sobre de oro",
+      "price": 1200000,
+      "desc": "5 cartas · al menos una Rara o mejor · más opciones de carta SÚPER",
+      "odds": {
+        "C": 18,
+        "U": 32,
+        "R": 28,
+        "E": 16,
+        "L": 6
+      },
+      "superP": 0.07
+    }
+  },
+  "lockers": [
+    {
+      "name": "De barrio",
+      "desc": "Bancos de madera, ganchos en la pared y un fluorescente que parpadea.",
+      "price": 0,
+      "req": 1,
+      "money": 0,
+      "xp": 0,
+      "rest": 0,
+      "offers": 5,
+      "scout": 0
+    },
+    {
+      "name": "Municipal",
+      "desc": "Azulejos, taquillas metálicas y duchas que funcionan.",
+      "price": 1500000,
+      "req": 3,
+      "money": 0.08,
+      "xp": 0.1,
+      "rest": 4,
+      "offers": 6,
+      "scout": 1
+    },
+    {
+      "name": "Profesional",
+      "desc": "Taquillas de madera con tu nombre, pizarra táctica y luz LED.",
+      "price": 5000000,
+      "req": 6,
+      "money": 0.16,
+      "xp": 0.2,
+      "rest": 8,
+      "offers": 7,
+      "scout": 2
+    },
+    {
+      "name": "De élite",
+      "desc": "Asientos de cuero, pantalla de vídeo, moqueta con el escudo.",
+      "price": 12000000,
+      "req": 10,
+      "money": 0.25,
+      "xp": 0.3,
+      "rest": 12,
+      "offers": 8,
+      "scout": 3
+    },
+    {
+      "name": "De leyenda",
+      "desc": "Mármol, oro y vitrina de trofeos. El vestuario de los campeones.",
+      "price": 30000000,
+      "req": 15,
+      "money": 0.35,
+      "xp": 0.4,
+      "rest": 16,
+      "offers": 9,
+      "scout": 4
+    }
+  ],
+  "divisions": {
+    "1": {
+      "name": "Leyenda",
+      "rarW": {
+        "R": 2,
+        "E": 3,
+        "L": 1.5
+      },
+      "budget": 96,
+      "lv": 8,
+      "supers": 3,
+      "noise": 2,
+      "mult": 4,
+      "reward": 45,
+      "promo": 0
+    },
+    "2": {
+      "name": "Diamante · Élite",
+      "rarW": {
+        "U": 2,
+        "R": 3,
+        "E": 2,
+        "L": 0.4
+      },
+      "budget": 80,
+      "lv": 6,
+      "supers": 2,
+      "noise": 3.5,
+      "mult": 2.8,
+      "reward": 30,
+      "promo": 12
+    },
+    "3": {
+      "name": "Oro · Nacional",
+      "rarW": {
+        "C": 1,
+        "U": 3,
+        "R": 2
+      },
+      "budget": 66,
+      "lv": 4,
+      "supers": 1,
+      "noise": 5,
+      "mult": 2,
+      "reward": 20,
+      "promo": 10
+    },
+    "4": {
+      "name": "Plata · Regional",
+      "rarW": {
+        "C": 3,
+        "U": 2
+      },
+      "budget": 54,
+      "lv": 3,
+      "supers": 1,
+      "noise": 6.5,
+      "mult": 1.4,
+      "reward": 10,
+      "promo": 8
+    },
+    "5": {
+      "name": "Bronce · Barrio",
+      "rarW": {
+        "C": 1
+      },
+      "budget": 44,
+      "lv": 1,
+      "supers": 0,
+      "noise": 9,
+      "mult": 1,
+      "reward": 0,
+      "promo": 6
+    }
+  },
+  "missions": [
+    {
+      "k": "win",
+      "t": "Gana un partido",
+      "goals": [
+        1
+      ],
+      "hasVal": true,
+      "m": 400000
+    },
+    {
+      "k": "wins",
+      "t": "Gana {n} partidos",
+      "goals": [
+        2,
+        3
+      ],
+      "hasVal": true,
+      "m": 650000
+    },
+    {
+      "k": "goals",
+      "t": "Marca {n} goles",
+      "goals": [
+        2,
+        3,
+        4,
+        5
+      ],
+      "hasVal": true,
+      "m": 280000
+    },
+    {
+      "k": "steals",
+      "t": "Recupera {n} balones",
+      "goals": [
+        5,
+        7,
+        9
+      ],
+      "hasVal": true,
+      "m": 250000
+    },
+    {
+      "k": "dribbles",
+      "t": "Gana {n} regates",
+      "goals": [
+        2,
+        3,
+        4
+      ],
+      "hasVal": true,
+      "m": 250000
+    },
+    {
+      "k": "races",
+      "t": "Gana {n} carreras a balón suelto",
+      "goals": [
+        2,
+        3,
+        4
+      ],
+      "hasVal": true,
+      "m": 250000
+    },
+    {
+      "k": "saves",
+      "t": "Tu portero hace {n} paradas",
+      "goals": [
+        2,
+        3
+      ],
+      "hasVal": true,
+      "m": 260000
+    },
+    {
+      "k": "clean",
+      "t": "Deja la portería a cero",
+      "goals": [
+        1
+      ],
+      "hasVal": true,
+      "m": 350000
+    },
+    {
+      "k": "play",
+      "t": "Juega {n} partidos",
+      "goals": [
+        2,
+        3
+      ],
+      "hasVal": true,
+      "m": 300000
+    },
+    {
+      "k": "far",
+      "t": "Marca desde fuera del área",
+      "goals": [
+        1
+      ],
+      "hasVal": true,
+      "m": 400000
+    },
+    {
+      "k": "passes",
+      "t": "Da {n} pases buenos",
+      "goals": [
+        10,
+        14,
+        18
+      ],
+      "hasVal": true,
+      "m": 250000
+    },
+    {
+      "k": "league",
+      "t": "Juega {n} partidos de liga",
+      "goals": [
+        1,
+        2
+      ],
+      "hasVal": true,
+      "m": 300000
+    },
+    {
+      "k": "homewin",
+      "t": "Gana un partido en casa",
+      "goals": [
+        1
+      ],
+      "hasVal": true,
+      "m": 380000
+    },
+    {
+      "k": "awaypts",
+      "t": "Puntúa fuera de casa (gana o empata)",
+      "goals": [
+        1
+      ],
+      "hasVal": true,
+      "m": 420000
+    },
+    {
+      "k": "comeback",
+      "t": "Gana un partido que ibas perdiendo",
+      "goals": [
+        1
+      ],
+      "hasVal": true,
+      "m": 600000
+    },
+    {
+      "k": "late",
+      "t": "Marca a partir del minuto 80",
+      "goals": [
+        1
+      ],
+      "hasVal": true,
+      "m": 350000
+    },
+    {
+      "k": "brace",
+      "t": "Que un futbolista marque {n} goles en un partido",
+      "goals": [
+        2
+      ],
+      "hasVal": true,
+      "m": 450000
+    },
+    {
+      "k": "bigwin",
+      "t": "Gana por {n} goles de diferencia",
+      "goals": [
+        2,
+        3
+      ],
+      "hasVal": true,
+      "m": 450000,
+      "best": true
+    },
+    {
+      "k": "shots",
+      "t": "Tira {n} veces a puerta",
+      "goals": [
+        5,
+        7,
+        9
+      ],
+      "hasVal": true,
+      "m": 250000
+    },
+    {
+      "k": "subs",
+      "t": "Haz {n} cambios",
+      "goals": [
+        2,
+        3
+      ],
+      "hasVal": true,
+      "m": 220000
+    },
+    {
+      "k": "super",
+      "t": "Usa una carta SÚPER",
+      "goals": [
+        1
+      ],
+      "hasVal": true,
+      "m": 260000
+    },
+    {
+      "k": "nocards",
+      "t": "Acaba un partido sin tarjetas",
+      "goals": [
+        1
+      ],
+      "hasVal": true,
+      "m": 260000
+    },
+    {
+      "k": "nolose",
+      "t": "No pierdas {n} partidos seguidos",
+      "goals": [
+        2,
+        3
+      ],
+      "hasVal": true,
+      "m": 450000
+    },
+    {
+      "k": "derby",
+      "t": "Juega un derbi de liga",
+      "goals": [
+        1
+      ],
+      "hasVal": true,
+      "m": 300000,
+      "needs": "league"
+    },
+    {
+      "k": "poss",
+      "t": "Ten más posesión que el rival",
+      "goals": [
+        1
+      ],
+      "hasVal": true,
+      "m": 260000
+    },
+    {
+      "k": "tactic",
+      "t": "Cambia la formación en pleno partido",
+      "goals": [
+        1
+      ],
+      "hasVal": true,
+      "m": 220000
+    }
+  ]
+}

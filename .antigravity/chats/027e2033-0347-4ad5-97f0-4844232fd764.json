@@ -172,6 +172,18 @@
       "created_at": "2026-11-08T23:54:07.321Z",
       "sender": "macOS",
       "is_cancelled": false
+    },
+    {
+      "id": "48d22d76-0d35-4576-b5fd-9060e4a1a273",
+      "role": "user",
+      "content": "puedo descargar un APK jugable para ir probando?",
+      "status": "pending",
+      "model": "gemini-3.8-flash-high",
+      "client_type": "gemini-bridge",
+      "parent_message_id": null,
+      "created_at": "2026-11-08T23:56:04.774Z",
+      "sender": "ios",
+      "is_cancelled": false
     }
   ]
 }

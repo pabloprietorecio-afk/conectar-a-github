@@ -42,8 +42,8 @@ func start(seed_value: int) -> void:
 func play_card(index: int) -> Dictionary:
     if ended or index < 0 or index >= hand.size():
         return snapshot()
-    var card := hand[index]
-    var rival := ACTIONS[rng.randi_range(0, ACTIONS.size() - 1)]
+    var card: Dictionary = hand[index]
+    var rival: Dictionary = ACTIONS[rng.randi_range(0, ACTIONS.size() - 1)]
     var user_roll := rng.randi_range(1, 6) + rng.randi_range(1, 6) + int(card.power)
     var rival_roll := rng.randi_range(1, 6) + rng.randi_range(1, 6) + int(rival.base)
     var success := user_roll >= rival_roll

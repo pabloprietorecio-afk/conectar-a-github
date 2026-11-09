@@ -15,8 +15,8 @@ static func normalize_attribute(value: float) -> float:
     return clampf((value - 40.0) / 59.0, 0.0, 1.0)
 
 static func power_ring(milliseconds: float, period_seconds: float = 1.25) -> float:
-    var phase := (milliseconds / 1000.0) / period_seconds
-    var fraction := phase - floor(phase)
+    var phase: float = (milliseconds / 1000.0) / period_seconds
+    var fraction: float = phase - floorf(phase)
     return 1.0 - absf(1.0 - 2.0 * fraction)
 
 static func next_kick(kicks: int, first_side: int, team_counts: Array[int], lists: Array) -> Dictionary:

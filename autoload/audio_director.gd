@@ -2,7 +2,12 @@ extends Node
 var catalog:Dictionary={}; var crowd_level:=0.35; var tension:=0.0
 func _ready()->void:
  var f:=FileAccess.open("res://audio/manifest.json",FileAccess.READ)
- if f: catalog=JSON.parse_string(f.get_as_text()) or {}
+ if f:
+  var parsed = JSON.parse_string(f.get_as_text())
+  if parsed is Dictionary:
+   catalog = parsed
+  else:
+   catalog = {}
 func stream_for(key:String)->AudioStream:
  if not catalog.has(key):return null
  return load("res://audio/"+str(catalog[key].file)) as AudioStream

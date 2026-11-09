@@ -48,8 +48,9 @@ func play(side:int,action:StringName,card_index:int=-1,special_index:int=-1)->Di
  if state.minute>=state.minutes: state.minute=state.minutes; state.ended=true; finished.emit(snapshot())
  return snapshot()
 func _shot(side:int,power:int)->void:
- var dist:=state.ball.distance_to(CoreRules.goal_point(side)); var pen:=maxf(0,dist-CoreRules.CFG.shot_free)/CoreRules.CFG.shot_pen_div
- var chance:=clampf(.52+power*.025-pen*.06,.03,.88)
+ var ball_pos: Vector2 = state.ball
+ var dist: float = ball_pos.distance_to(CoreRules.goal_point(side)); var pen: float = maxf(0,dist-float(CoreRules.CFG.shot_free))/float(CoreRules.CFG.shot_pen_div)
+ var chance: float = clampf(.52+power*.025-pen*.06,.03,.88)
  if rng.randf()<chance: state.score[side]+=1; state.ball=Vector2(32,50); state.possession=1-side
  else: state.possession=1-side
 func _energy_cost(action:StringName)->float:

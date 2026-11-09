@@ -2,7 +2,7 @@ class_name BotController
 extends RefCounted
 
 static func choose(state:Dictionary,side:int,rng:RandomNumberGenerator)->Dictionary:
- var ball:Vector2=state.ball; var attacking:=state.possession==side; var goal_y:=0.0 if side==0 else 100.0; var distance:=absf(ball.y-goal_y)
+ var ball:Vector2=state.ball; var attacking:bool=(int(state.possession)==side); var goal_y:float=0.0 if side==0 else 100.0; var distance:float=absf(ball.y-goal_y)
  var choices:Array[StringName]
  if attacking:
   if distance<20: choices=[&"tiro",&"regate",&"pase"]

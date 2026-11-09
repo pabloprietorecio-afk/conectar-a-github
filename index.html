@@ -3,1967 +3,1116 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Football Cards — Godot 4 Migration Hub</title>
+  <meta name="theme-color" content="#0a0f1e">
+  <title>Football Cards — G1 Hub</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-dark: #070b12;
-      --bg-card: #0d1522;
-      --bg-surface: #131e31;
-      --accent-green: #00e676;
-      --accent-blue: #00b0ff;
-      --accent-gold: #ffd700;
-      --accent-purple: #a855f7;
-      --accent-red: #ff3d71;
-      --text-main: #f0f4f8;
-      --text-muted: #8899aa;
-      --border-glow: rgba(0, 230, 118, 0.25);
-      --font-main: 'Outfit', sans-serif;
-      --font-mono: 'JetBrains Mono', monospace;
+      --bg: #080d1a;
+      --bg2: #0d1526;
+      --bg3: #111b32;
+      --surface: rgba(255,255,255,0.04);
+      --surface2: rgba(255,255,255,0.07);
+      --border: rgba(255,255,255,0.08);
+      --border2: rgba(255,255,255,0.14);
+      --green: #00e676;
+      --green2: #00c853;
+      --blue: #2979ff;
+      --blue2: #448aff;
+      --gold: #ffd600;
+      --gold2: #ffab00;
+      --purple: #aa00ff;
+      --purple2: #d500f9;
+      --red: #ff1744;
+      --cyan: #00e5ff;
+      --text: #edf2f7;
+      --muted: #6b7a94;
+      --muted2: #94a3b8;
+      --r-L: #ffd600; --r-E: #aa00ff; --r-R: #2979ff; --r-I: #00e676; --r-C: #94a3b8;
+      --font: 'Inter', system-ui, sans-serif;
+      --mono: 'JetBrains Mono', monospace;
+      --radius: 14px;
+      --radius2: 20px;
+      --shadow: 0 8px 32px rgba(0,0,0,0.5);
+    }
+    *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+    html{scroll-behavior:smooth}
+    body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden}
+    img{max-width:100%}
+    button{cursor:pointer;border:none;outline:none;font-family:var(--font)}
+    input,select{font-family:var(--font);outline:none}
+
+    /* ── HEADER ── */
+    header{
+      position:sticky;top:0;z-index:200;
+      background:rgba(8,13,26,0.85);backdrop-filter:blur(20px) saturate(180%);
+      border-bottom:1px solid var(--border);
+    }
+    .hdr{max-width:1400px;margin:0 auto;padding:.9rem 1.25rem;display:flex;align-items:center;gap:1rem}
+    .logo{display:flex;align-items:center;gap:.6rem;text-decoration:none;flex-shrink:0}
+    .logo-ball{width:36px;height:36px;background:linear-gradient(135deg,var(--green),var(--blue));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;box-shadow:0 0 16px rgba(0,230,118,.35)}
+    .logo-text{font-size:1.1rem;font-weight:800;background:linear-gradient(90deg,var(--green),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap}
+    .logo-sub{font-size:.6rem;font-weight:500;color:var(--muted);display:block;line-height:1;margin-top:1px;white-space:nowrap;-webkit-text-fill-color:var(--muted)}
+    .hdr-stats{display:flex;gap:.5rem;margin-left:auto;flex-wrap:wrap}
+    .hdr-pill{background:var(--surface2);border:1px solid var(--border);border-radius:999px;padding:.25rem .75rem;font-size:.7rem;font-weight:600;color:var(--muted2);white-space:nowrap}
+    .hdr-pill span{color:var(--green);margin-right:.25rem}
+
+    /* ── TABS ── */
+    .tabs-wrap{background:var(--bg2);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
+    .tabs-wrap::-webkit-scrollbar{display:none}
+    .tabs{display:flex;max-width:1400px;margin:0 auto;padding:0 1rem;gap:.25rem;min-width:max-content}
+    .tab{background:none;color:var(--muted);padding:.7rem 1rem;font-size:.8rem;font-weight:600;border-bottom:2px solid transparent;border-radius:0;transition:all .2s;white-space:nowrap}
+    .tab:hover{color:var(--text)}
+    .tab.on{color:var(--green);border-bottom-color:var(--green)}
+
+    /* ── MAIN ── */
+    main{max-width:1400px;margin:0 auto;padding:1.5rem 1.25rem 4rem}
+    .panel{display:none}
+    .panel.on{display:block;animation:fadeUp .25s ease}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+    /* ── SECTION TITLE ── */
+    .sec-title{font-size:1.4rem;font-weight:800;margin-bottom:1.25rem;display:flex;align-items:center;gap:.6rem}
+    .sec-title .badge{font-size:.7rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;background:var(--surface2);color:var(--muted2);border:1px solid var(--border)}
+
+    /* ── CARDS ── */
+    .grid{display:grid;gap:1rem}
+    .g2{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+    .g3{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+    .g4{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius2);padding:1.25rem;transition:border-color .2s,transform .2s,box-shadow .2s}
+    .card:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:var(--shadow)}
+
+    /* ── RARITY COLORS ── */
+    .rarity-L{--rc:var(--r-L)} .rarity-E{--rc:var(--r-E)}
+    .rarity-R{--rc:var(--r-R)} .rarity-I{--rc:var(--r-I)} .rarity-C{--rc:var(--r-C)}
+    .rarity-badge{font-size:.6rem;font-weight:700;padding:.15rem .5rem;border-radius:999px;background:color-mix(in srgb,var(--rc) 15%,transparent);color:var(--rc);border:1px solid color-mix(in srgb,var(--rc) 30%,transparent)}
+    .ovr-ring{width:48px;height:48px;border-radius:50%;background:conic-gradient(var(--rc) calc(var(--pct)*1%),var(--surface2) 0);display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:800;flex-shrink:0;position:relative}
+    .ovr-ring::before{content:'';position:absolute;inset:4px;border-radius:50%;background:var(--bg2)}
+    .ovr-num{position:relative;z-index:1;color:var(--rc)}
+
+    /* ── STAT BARS ── */
+    .stat-row{display:flex;align-items:center;gap:.5rem;margin:.2rem 0}
+    .stat-label{font-size:.6rem;font-weight:700;color:var(--muted);width:28px;flex-shrink:0}
+    .stat-bar{flex:1;height:4px;background:rgba(255,255,255,0.08);border-radius:999px;overflow:hidden}
+    .stat-fill{height:100%;border-radius:999px;background:var(--rc,var(--green))}
+    .stat-val{font-size:.65rem;font-weight:700;color:var(--muted2);width:22px;text-align:right;flex-shrink:0}
+
+    /* ── PLAYER CARD ── */
+    .pcard{display:flex;flex-direction:column;gap:.75rem}
+    .pcard-top{display:flex;align-items:center;gap:.75rem}
+    .pcard-info{flex:1;min-width:0}
+    .pcard-name{font-size:.85rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .pcard-meta{font-size:.65rem;color:var(--muted);margin-top:.2rem;display:flex;gap:.4rem;align-items:center}
+    .pos-pill{background:var(--surface2);border-radius:4px;padding:.1rem .4rem;font-size:.6rem;font-weight:700;color:var(--muted2)}
+
+    /* ── SEARCH / FILTER ── */
+    .filter-bar{display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:1.25rem;align-items:center}
+    .search-wrap{position:relative;flex:1;min-width:200px}
+    .search-wrap input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:.6rem 1rem .6rem 2.4rem;color:var(--text);font-size:.85rem}
+    .search-wrap input::placeholder{color:var(--muted)}
+    .search-icon{position:absolute;left:.8rem;top:50%;transform:translateY(-50%);font-size:.9rem;pointer-events:none}
+    .filter-select{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:.6rem .8rem;color:var(--text);font-size:.8rem;cursor:pointer}
+    .filter-select option{background:var(--bg2)}
+
+    /* ── MATCH ENGINE ── */
+    .match-layout{display:grid;grid-template-columns:1fr auto 1fr;gap:1rem;align-items:start}
+    @media(max-width:600px){.match-layout{grid-template-columns:1fr;}}
+    .match-vs{display:flex;flex-direction:column;align-items:center;gap:.5rem;padding:1rem .5rem}
+    .match-vs .vs-text{font-size:1.5rem;font-weight:900;color:var(--muted)}
+    .score-display{display:flex;align-items:center;gap:1rem;justify-content:center;font-size:2.5rem;font-weight:900}
+    .score-sep{color:var(--muted);font-size:1.5rem}
+    .team-score{color:var(--text)}
+    .match-log{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.75rem;max-height:200px;overflow-y:auto;font-size:.75rem;line-height:1.6;font-family:var(--mono);color:var(--muted2);scrollbar-width:thin}
+    .log-entry{padding:.15rem 0;border-bottom:1px solid rgba(255,255,255,0.04)}
+    .log-entry:last-child{border-bottom:none}
+    .log-goal{color:var(--green);font-weight:600}
+    .log-card{color:var(--gold)}
+
+    /* ── SELECTOR TEAM ── */
+    .team-selector{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius2);padding:1rem}
+    .team-name{font-size:1rem;font-weight:700;margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem}
+    .player-pick{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:.5rem .75rem;margin:.3rem 0;cursor:pointer;display:flex;align-items:center;gap:.6rem;font-size:.8rem;transition:border-color .15s}
+    .player-pick:hover,.player-pick.sel{border-color:var(--green)}
+    .player-pick.sel{background:rgba(0,230,118,.08)}
+
+    /* ── TACTIC BOARD ── */
+    .tactic-wrap{display:grid;grid-template-columns:1fr 220px;gap:1rem;align-items:start}
+    @media(max-width:700px){.tactic-wrap{grid-template-columns:1fr}}
+    .pitch{background:linear-gradient(180deg,#1a3a1a 0%,#0f2a0f 100%);border-radius:var(--radius2);aspect-ratio:7/10;position:relative;overflow:hidden;border:2px solid rgba(255,255,255,0.1)}
+    .pitch-lines{position:absolute;inset:0;pointer-events:none}
+    .p-mark{position:absolute;transform:translate(-50%,-50%);text-align:center;cursor:default}
+    .p-dot{width:36px;height:36px;border-radius:50%;background:rgba(0,230,118,.2);border:2px solid var(--green);display:flex;align-items:center;justify-content:center;font-size:.55rem;font-weight:700;color:var(--green);margin:0 auto}
+    .p-label{font-size:.5rem;color:rgba(255,255,255,.7);margin-top:2px;white-space:nowrap}
+
+    /* ── PACK OPENER ── */
+    .pack-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.75rem;margin:1rem 0}
+    .pack-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius2);padding:1.25rem .75rem;text-align:center;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+    .pack-card::before{content:'';position:absolute;inset:0;background:var(--glow,transparent);opacity:0;transition:opacity .3s}
+    .pack-card:hover::before{opacity:1}
+    .pack-card:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+    .pack-emoji{font-size:2rem;margin-bottom:.5rem}
+    .pack-name{font-size:.8rem;font-weight:700;margin-bottom:.25rem}
+    .pack-desc{font-size:.65rem;color:var(--muted)}
+    .pack-price{font-size:.75rem;font-weight:700;color:var(--gold);margin-top:.5rem}
+    .pull-result{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius2);padding:1rem;min-height:120px;display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;justify-content:center}
+    .pull-pill{padding:.4rem .8rem;border-radius:999px;font-size:.75rem;font-weight:700;border:1px solid var(--rc,var(--border));background:color-mix(in srgb,var(--rc,transparent) 10%,transparent);color:var(--rc,var(--muted2))}
+
+    /* ── SPECIALS ── */
+    .special-card{padding:1rem 1.25rem;position:relative;overflow:hidden}
+    .special-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,color-mix(in srgb,var(--sc) 8%,transparent),transparent);pointer-events:none}
+    .special-emoji{font-size:1.6rem;margin-bottom:.5rem}
+    .special-name{font-size:.9rem;font-weight:700;margin-bottom:.25rem}
+    .special-text{font-size:.7rem;color:var(--muted2);line-height:1.5}
+    .super-badge{font-size:.6rem;font-weight:700;color:var(--gold);border:1px solid var(--gold);border-radius:999px;padding:.1rem .4rem;display:inline-block;margin-bottom:.4rem}
+    .role-badge{font-size:.6rem;font-weight:600;padding:.1rem .4rem;border-radius:4px;margin-right:.2rem;display:inline-block}
+    .role-atk{background:rgba(255,23,68,.15);color:var(--red)}
+    .role-def{background:rgba(41,121,255,.15);color:var(--blue2)}
+
+    /* ── BUTTONS ── */
+    .btn{display:inline-flex;align-items:center;gap:.4rem;padding:.65rem 1.25rem;border-radius:var(--radius);font-size:.85rem;font-weight:700;transition:all .2s;cursor:pointer;border:none}
+    .btn-primary{background:var(--green);color:#000}
+    .btn-primary:hover{background:var(--green2);transform:translateY(-1px)}
+    .btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
+    .btn-secondary:hover{border-color:var(--border2)}
+    .btn-ghost{background:none;color:var(--muted2);border:1px solid var(--border)}
+    .btn-ghost:hover{color:var(--text);border-color:var(--border2)}
+    .btn-sm{padding:.4rem .8rem;font-size:.75rem}
+    .btn-row{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.75rem}
+
+    /* ── STATUS CARDS ── */
+    .status-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.75rem;margin-bottom:1.5rem}
+    .status-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius2);padding:1rem 1.25rem}
+    .status-label{font-size:.65rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.4rem}
+    .status-val{font-size:1.4rem;font-weight:800}
+    .status-sub{font-size:.7rem;color:var(--muted);margin-top:.2rem}
+    .status-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:.35rem}
+    .dot-green{background:var(--green);box-shadow:0 0 8px var(--green)}
+    .dot-yellow{background:var(--gold)}
+    .dot-red{background:var(--red)}
+    .progress-bar{height:6px;background:rgba(255,255,255,0.08);border-radius:999px;margin-top:.6rem;overflow:hidden}
+    .progress-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--green),var(--cyan))}
+
+    /* ── HERO ── */
+    .hero{background:linear-gradient(135deg,rgba(0,230,118,.08) 0%,rgba(41,121,255,.06) 50%,rgba(170,0,255,.06) 100%);border:1px solid rgba(0,230,118,.15);border-radius:var(--radius2);padding:2rem 1.5rem;margin-bottom:1.5rem;position:relative;overflow:hidden}
+    .hero::before{content:'⚽';position:absolute;right:-20px;top:-20px;font-size:8rem;opacity:.05;transform:rotate(20deg)}
+    .hero h1{font-size:1.6rem;font-weight:900;margin-bottom:.5rem;line-height:1.2}
+    .hero h1 span{background:linear-gradient(90deg,var(--green),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .hero p{font-size:.85rem;color:var(--muted2);line-height:1.6;max-width:500px}
+    .hero-tags{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem}
+    .hero-tag{background:var(--surface2);border:1px solid var(--border);border-radius:999px;padding:.3rem .8rem;font-size:.7rem;font-weight:600;color:var(--muted2)}
+
+    /* ── APK SECTION ── */
+    .apk-card{background:linear-gradient(135deg,rgba(41,121,255,.1),rgba(0,229,255,.05));border:1px solid rgba(41,121,255,.25);border-radius:var(--radius2);padding:1.5rem;display:flex;align-items:center;gap:1.25rem;flex-wrap:wrap}
+    .apk-icon{font-size:2.5rem;flex-shrink:0}
+    .apk-info{flex:1;min-width:200px}
+    .apk-title{font-size:1rem;font-weight:700;margin-bottom:.25rem}
+    .apk-desc{font-size:.75rem;color:var(--muted2)}
+    .apk-actions{display:flex;gap:.5rem;flex-wrap:wrap}
+
+    /* ── TIMELINE ── */
+    .timeline{position:relative;padding-left:1.5rem}
+    .timeline::before{content:'';position:absolute;left:.45rem;top:0;bottom:0;width:2px;background:var(--border)}
+    .tl-item{position:relative;margin-bottom:1.25rem}
+    .tl-dot{position:absolute;left:-1.08rem;top:.3rem;width:14px;height:14px;border-radius:50%;border:2px solid var(--border2);background:var(--bg2);display:flex;align-items:center;justify-content:center}
+    .tl-dot.done{border-color:var(--green);background:color-mix(in srgb,var(--green) 15%,var(--bg2))}
+    .tl-dot.wip{border-color:var(--gold);background:color-mix(in srgb,var(--gold) 15%,var(--bg2))}
+    .tl-content{font-size:.8rem;color:var(--muted2);padding-left:.5rem}
+    .tl-title{font-size:.85rem;font-weight:700;color:var(--text);margin-bottom:.2rem}
+    .tl-tag{font-size:.6rem;font-weight:600;padding:.1rem .4rem;border-radius:4px;margin-left:.4rem}
+    .tag-done{background:rgba(0,230,118,.15);color:var(--green)}
+    .tag-wip{background:rgba(255,214,0,.15);color:var(--gold)}
+    .tag-next{background:rgba(255,255,255,.08);color:var(--muted)}
+
+    /* ── 3D PITCH ── */
+    #pitch3d{width:100%;height:360px;border-radius:var(--radius2);overflow:hidden;background:#0a1f0a;position:relative}
+    #pitch3d canvas{border-radius:var(--radius2)}
+    .pitch3d-overlay{position:absolute;bottom:1rem;left:50%;transform:translateX(-50%);display:flex;gap:.5rem;z-index:10}
+
+    /* ── FOOTER ── */
+    footer{border-top:1px solid var(--border);padding:1.5rem 1.25rem;text-align:center;font-size:.7rem;color:var(--muted)}
+    footer a{color:var(--green);text-decoration:none}
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:480px){
+      .hdr-stats{display:none}
+      .hero h1{font-size:1.3rem}
+      .score-display{font-size:2rem}
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      background-color: var(--bg-dark);
-      color: var(--text-main);
-      font-family: var(--font-main);
-      min-height: 100vh;
-      overflow-x: hidden;
-      display: flex;
-      flex-direction: column;
-    }
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar{width:6px;height:6px}
+    ::-webkit-scrollbar-track{background:transparent}
+    ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:999px}
 
-    /* HEADER */
-    header {
-      background: linear-gradient(180deg, rgba(13, 21, 34, 0.95) 0%, rgba(7, 11, 18, 0.95) 100%);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      padding: 1rem 1.5rem;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      backdrop-filter: blur(12px);
-    }
-    .header-content {
-      max-width: 1300px;
-      margin: 0 auto;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 1rem;
-    }
-    .logo-group {
-      display: flex;
-      align-items: center;
-      gap: 0.8rem;
-    }
-    .logo-badge {
-      background: linear-gradient(135deg, #00e676 0%, #00b0ff 100%);
-      width: 42px;
-      height: 42px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      font-weight: 900;
-      color: #050b14;
-      box-shadow: 0 4px 14px rgba(0, 230, 118, 0.3);
-    }
-    .title-area h1 {
-      font-size: 1.25rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      background: linear-gradient(90deg, #ffffff, #a5b4fc);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .title-area p {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      font-family: var(--font-mono);
-    }
+    /* ── PITCH SVG ── */
+    .pitch-svg{position:absolute;inset:0;width:100%;height:100%;opacity:.3;pointer-events:none}
 
-    .badge-bar {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 0.3rem 0.65rem;
-      border-radius: 999px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: var(--text-main);
-    }
-    .badge.green { border-color: rgba(0, 230, 118, 0.4); color: #00e676; background: rgba(0, 230, 118, 0.08); }
-    .badge.blue { border-color: rgba(0, 176, 255, 0.4); color: #00b0ff; background: rgba(0, 176, 255, 0.08); }
-    .badge.gold { border-color: rgba(255, 215, 0, 0.4); color: #ffd700; background: rgba(255, 215, 0, 0.08); }
+    /* ── PLAYER COUNT FOOTER ── */
+    .pcount{font-size:.7rem;color:var(--muted);margin-top:.75rem}
 
-    .btn-github {
-      background: linear-gradient(135deg, #1f2937, #111827);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: #fff;
-      padding: 0.45rem 0.9rem;
-      border-radius: 8px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      transition: all 0.2s;
-    }
-    .btn-github:hover {
-      border-color: var(--accent-green);
-      box-shadow: 0 0 12px rgba(0, 230, 118, 0.3);
-      transform: translateY(-1px);
-    }
-
-    /* NAVIGATION TABS */
-    nav.tabs {
-      background: var(--bg-card);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      display: flex;
-      overflow-x: auto;
-      max-width: 1300px;
-      margin: 0 auto;
-      width: 100%;
-      padding: 0 1rem;
-    }
-    .tab-btn {
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      padding: 0.9rem 1.2rem;
-      font-size: 0.85rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      border-bottom: 2px solid transparent;
-      white-space: nowrap;
-      transition: all 0.2s;
-      font-family: var(--font-main);
-    }
-    .tab-btn:hover { color: var(--text-main); }
-    .tab-btn.active {
-      color: var(--accent-green);
-      border-bottom-color: var(--accent-green);
-      background: rgba(0, 230, 118, 0.04);
-    }
-
-    /* MAIN CONTAINER */
-    main {
-      flex: 1;
-      max-width: 1300px;
-      margin: 0 auto;
-      width: 100%;
-      padding: 1.5rem;
-    }
-
-    .tab-content { display: none; }
-    .tab-content.active { display: block; animation: fadeIn 0.25s ease-out; }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* 3D PROTOTYPE SECTION */
-    .viewport-grid {
-      display: grid;
-      grid-template-columns: 1fr 340px;
-      gap: 1.5rem;
-    }
-    @media (max-width: 950px) {
-      .viewport-grid { grid-template-columns: 1fr; }
-    }
-
-    .canvas-card {
-      background: var(--bg-card);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 16px;
-      overflow: hidden;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      height: 580px;
-      box-shadow: 0 16px 40px rgba(0,0,0,0.5);
-    }
-    #three-canvas {
-      width: 100%;
-      height: 100%;
-      display: block;
-      cursor: crosshair;
-    }
-
-    .canvas-hud {
-      position: absolute;
-      top: 1rem;
-      left: 1rem;
-      right: 1rem;
-      display: flex;
-      justify-content: space-between;
-      pointer-events: none;
-    }
-    .hud-chip {
-      background: rgba(7, 11, 18, 0.85);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(8px);
-      padding: 0.4rem 0.8rem;
-      border-radius: 10px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      pointer-events: auto;
-    }
-    .hud-chip .score {
-      font-family: var(--font-mono);
-      font-size: 1rem;
-      color: var(--accent-gold);
-    }
-
-    .aim-reticle {
-      position: absolute;
-      width: 32px;
-      height: 32px;
-      border: 2px dashed rgba(255, 255, 255, 0.7);
-      border-radius: 50%;
-      pointer-events: none;
-      transform: translate(-50%, -50%);
-      display: none;
-      box-shadow: 0 0 10px rgba(0, 230, 118, 0.5);
-    }
-    .aim-reticle::after {
-      content: '';
-      position: absolute;
-      top: 50%; left: 50%;
-      width: 4px; height: 4px;
-      background: var(--accent-green);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-    }
-
-    .canvas-controls-overlay {
-      position: absolute;
-      bottom: 1rem;
-      left: 1rem;
-      right: 1rem;
-      display: flex;
-      justify-content: center;
-      gap: 0.5rem;
-      pointer-events: none;
-    }
-    .overlay-btn {
-      pointer-events: auto;
-      background: rgba(13, 21, 34, 0.9);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(8px);
-      color: #fff;
-      padding: 0.4rem 0.8rem;
-      border-radius: 8px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .overlay-btn:hover {
-      background: var(--accent-green);
-      color: #050b14;
-      border-color: var(--accent-green);
-    }
-
-    /* SIDE PANEL CONTROLS */
-    .controls-panel {
-      background: var(--bg-card);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 16px;
-      padding: 1.25rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1.25rem;
-    }
-    .panel-section-title {
-      font-size: 0.85rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-muted);
-      margin-bottom: 0.6rem;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-    .control-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 0.5rem;
-    }
-    .control-btn {
-      background: var(--bg-surface);
-      border: 1px solid rgba(255, 255, 255, 0.07);
-      color: var(--text-main);
-      padding: 0.55rem;
-      border-radius: 8px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.4rem;
-      transition: all 0.2s;
-    }
-    .control-btn:hover, .control-btn.active {
-      border-color: var(--accent-green);
-      background: rgba(0, 230, 118, 0.1);
-      color: #fff;
-    }
-
-    .power-gauge {
-      background: #050b14;
-      border-radius: 8px;
-      height: 14px;
-      overflow: hidden;
-      position: relative;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    .power-fill {
-      height: 100%;
-      width: 72%;
-      background: linear-gradient(90deg, #00e676 0%, #ffd700 70%, #ff3d71 100%);
-      transition: width 0.1s linear;
-    }
-    .sweet-spot {
-      position: absolute;
-      left: 65%;
-      width: 15%;
-      height: 100%;
-      background: rgba(255, 255, 255, 0.25);
-      border-left: 2px solid #fff;
-      border-right: 2px solid #fff;
-    }
-
-    .shootout-log {
-      background: #050b14;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: 8px;
-      padding: 0.75rem;
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      max-height: 140px;
-      overflow-y: auto;
-      color: var(--text-muted);
-      display: flex;
-      flex-direction: column;
-      gap: 0.3rem;
-    }
-    .shootout-log .log-item.goal { color: var(--accent-green); font-weight: 600; }
-    .shootout-log .log-item.saved { color: var(--accent-blue); }
-    .shootout-log .log-item.miss { color: var(--accent-red); }
-
-    /* OBJECTIVES ACCORDION / GRID */
-    .objectives-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-      gap: 1.25rem;
-    }
-    .objective-card {
-      background: var(--bg-card);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 14px;
-      padding: 1.25rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.8rem;
-      position: relative;
-      transition: transform 0.2s, border-color 0.2s;
-    }
-    .objective-card:hover {
-      border-color: rgba(0, 230, 118, 0.4);
-      transform: translateY(-2px);
-    }
-    .obj-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .obj-number {
-      font-size: 0.8rem;
-      font-family: var(--font-mono);
-      font-weight: 700;
-      color: var(--accent-green);
-    }
-    .obj-badge {
-      font-size: 0.65rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      padding: 0.2rem 0.5rem;
-      border-radius: 6px;
-      background: rgba(0, 230, 118, 0.15);
-      color: var(--accent-green);
-      border: 1px solid rgba(0, 230, 118, 0.3);
-    }
-    .obj-title {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: #fff;
-    }
-    .obj-desc {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
-    .obj-tech-tag {
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      background: var(--bg-surface);
-      padding: 0.25rem 0.5rem;
-      border-radius: 6px;
-      color: var(--accent-blue);
-      align-self: flex-start;
-    }
-
-    /* CARDS SECTION */
-    .cards-filter-bar {
-      display: flex;
-      gap: 0.6rem;
-      margin-bottom: 1.25rem;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-    .search-input {
-      background: var(--bg-card);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      color: #fff;
-      padding: 0.5rem 0.9rem;
-      border-radius: 8px;
-      font-size: 0.85rem;
-      font-family: var(--font-main);
-      min-width: 240px;
-    }
-    .search-input:focus {
-      outline: none;
-      border-color: var(--accent-green);
-    }
-
-    .cards-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 1.25rem;
-    }
-    .fc-card {
-      background: linear-gradient(145deg, #182234 0%, #0d1522 100%);
-      border: 2px solid #c89b3c;
-      border-radius: 16px;
-      padding: 1rem;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      box-shadow: 0 10px 24px rgba(0,0,0,0.6);
-      transition: transform 0.2s;
-    }
-    .fc-card.tier-leyenda { border-color: #ffd700; background: linear-gradient(145deg, #2a2215 0%, #0d1522 100%); }
-    .fc-card.tier-crack { border-color: #c084fc; background: linear-gradient(145deg, #241432 0%, #0d1522 100%); }
-    .fc-card.tier-titular { border-color: #60a5fa; background: linear-gradient(145deg, #142235 0%, #0d1522 100%); }
-    .fc-card.tier-reserva { border-color: #a8a29e; background: linear-gradient(145deg, #1c1917 0%, #0d1522 100%); }
-
-    .fc-card:hover {
-      transform: translateY(-4px) scale(1.02);
-      box-shadow: 0 14px 30px rgba(0,0,0,0.8);
-    }
-    .card-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-    }
-    .card-rating {
-      font-size: 1.8rem;
-      font-weight: 900;
-      line-height: 1;
-      color: #ffd700;
-    }
-    .card-pos {
-      font-size: 0.9rem;
-      font-weight: 700;
-      color: #e2e8f0;
-    }
-    .card-badge {
-      font-size: 0.65rem;
-      font-weight: 700;
-      background: rgba(200, 155, 60, 0.2);
-      border: 1px solid #c89b3c;
-      color: #ffd700;
-      padding: 0.15rem 0.4rem;
-      border-radius: 4px;
-    }
-    .card-player-name {
-      font-size: 1rem;
-      font-weight: 800;
-      text-align: center;
-      margin: 0.8rem 0 0.3rem;
-      color: #ffffff;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .card-meta-line {
-      font-size: 0.72rem;
-      text-align: center;
-      color: var(--text-muted);
-      margin-bottom: 0.6rem;
-      display: flex;
-      justify-content: center;
-      gap: 0.4rem;
-      align-items: center;
-    }
-    .card-stats-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 0.3rem;
-      background: rgba(0,0,0,0.35);
-      padding: 0.5rem;
-      border-radius: 8px;
-      font-size: 0.75rem;
-      font-family: var(--font-mono);
-      text-align: center;
-    }
-    .stat-val { font-weight: 700; color: #fff; }
-    .stat-lbl { font-size: 0.65rem; color: var(--text-muted); }
-
-    .card-speed-badge {
-      font-size: 0.68rem;
-      font-family: var(--font-mono);
-      color: #38bdf8;
-      text-align: center;
-      margin-top: 0.5rem;
-      background: rgba(56, 189, 248, 0.1);
-      padding: 0.2rem;
-      border-radius: 4px;
-    }
-
-    /* PITCH TACTICS BOARD */
-    .tactics-board {
-      background: linear-gradient(180deg, #14532d 0%, #166534 50%, #14532d 100%);
-      border: 4px solid #ffffff;
-      border-radius: 16px;
-      height: 520px;
-      position: relative;
-      overflow: hidden;
-      box-shadow: inset 0 0 60px rgba(0,0,0,0.6);
-      margin-top: 1rem;
-    }
-    .pitch-center-line {
-      position: absolute;
-      top: 50%;
-      left: 0; right: 0;
-      height: 2px;
-      background: rgba(255,255,255,0.7);
-    }
-    .pitch-center-circle {
-      position: absolute;
-      top: 50%; left: 50%;
-      width: 120px; height: 120px;
-      border: 2px solid rgba(255,255,255,0.7);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-    }
-    .pitch-player-pin {
-      position: absolute;
-      width: 44px;
-      height: 44px;
-      background: linear-gradient(135deg, #0d1522, #1f2937);
-      border: 2px solid var(--accent-gold);
-      border-radius: 50%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      transform: translate(-50%, -50%);
-      cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.6);
-      transition: transform 0.2s;
-    }
-    .pitch-player-pin:hover {
-      transform: translate(-50%, -50%) scale(1.15);
-      border-color: #fff;
-    }
-    .pin-num { font-size: 0.7rem; font-weight: 900; color: #ffd700; line-height: 1; }
-    .pin-pos { font-size: 0.55rem; color: #fff; font-family: var(--font-mono); font-weight: 700; }
-    .pin-label {
-      position: absolute;
-      top: 100%;
-      font-size: 0.65rem;
-      font-weight: 700;
-      color: #fff;
-      background: rgba(0,0,0,0.8);
-      padding: 0.1rem 0.35rem;
-      border-radius: 4px;
-      white-space: nowrap;
-      pointer-events: none;
-    }
-
-    /* SPECIALS GRID */
-    .specials-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 1.25rem;
-    }
-    .special-card {
-      background: var(--bg-card);
-      border: 1px solid rgba(168, 85, 247, 0.3);
-      border-radius: 12px;
-      padding: 1.25rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      position: relative;
-      background: linear-gradient(145deg, #1a1528 0%, #0d1522 100%);
-    }
-    .special-card-title {
-      font-size: 1.05rem;
-      font-weight: 800;
-      color: #e9d5ff;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    /* PACK OPENER SECTION */
-    .pack-opener-box {
-      background: var(--bg-card);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 16px;
-      padding: 1.5rem;
-      text-align: center;
-      max-width: 800px;
-      margin: 0 auto;
-    }
-    .pack-button-container {
-      display: flex;
-      justify-content: center;
-      gap: 1.5rem;
-      margin: 1.5rem 0;
-      flex-wrap: wrap;
-    }
-    .pack-card-btn {
-      background: linear-gradient(145deg, #1f293d, #0f172a);
-      border: 2px solid var(--accent-gold);
-      border-radius: 14px;
-      padding: 1.25rem;
-      width: 220px;
-      cursor: pointer;
-      transition: all 0.2s;
-      color: #fff;
-    }
-    .pack-card-btn:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 10px 25px rgba(255, 215, 0, 0.25);
-    }
-    .opened-cards-area {
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-      flex-wrap: wrap;
-      margin-top: 1.5rem;
-      min-height: 220px;
-    }
-
-    /* AUDIO SOUNDBOARD */
-    .soundboard-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 0.8rem;
-    }
-    .sound-btn {
-      background: var(--bg-card);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 10px;
-      padding: 0.85rem;
-      text-align: left;
-      cursor: pointer;
-      transition: all 0.2s;
-      color: var(--text-main);
-      display: flex;
-      flex-direction: column;
-      gap: 0.3rem;
-    }
-    .sound-btn:hover {
-      border-color: var(--accent-blue);
-      background: rgba(0, 176, 255, 0.08);
-    }
-    .sound-btn.playing {
-      border-color: var(--accent-green);
-      background: rgba(0, 230, 118, 0.15);
-    }
-    .sound-name { font-size: 0.85rem; font-weight: 700; }
-    .sound-type { font-size: 0.7rem; color: var(--text-muted); font-family: var(--font-mono); }
-
-    /* CODE & TERMINAL */
-    .terminal-box {
-      background: #050911;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      padding: 1.25rem;
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
-      color: #a7f3d0;
-      line-height: 1.6;
-      box-shadow: inset 0 2px 8px rgba(0,0,0,0.8);
-      white-space: pre-wrap;
-    }
-
-    footer {
-      background: var(--bg-card);
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-      padding: 1.25rem;
-      text-align: center;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-top: 2rem;
-    }
+    /* ── MODAL ── */
+    .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);z-index:500;display:none;align-items:center;justify-content:center;padding:1rem}
+    .modal-bg.open{display:flex}
+    .modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius2);padding:1.5rem;max-width:420px;width:100%;max-height:85vh;overflow-y:auto;position:relative}
+    .modal-close{position:absolute;top:.75rem;right:.75rem;background:var(--surface2);border:1px solid var(--border);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:.8rem;cursor:pointer;color:var(--muted)}
   </style>
 </head>
 <body>
 
-  <!-- HEADER -->
-  <header>
-    <div class="header-content">
-      <div class="logo-group">
-        <div class="logo-badge">⚽</div>
-        <div class="title-area">
-          <h1>FOOTBALL CARDS — GODOT 4 MIGRATION HUB</h1>
-          <p>Repositorio nativo: pabloprietorecio-afk/Football-Cards-Godot</p>
-        </div>
+<!-- HEADER -->
+<header>
+  <div class="hdr">
+    <a class="logo" href="#">
+      <div class="logo-ball">⚽</div>
+      <div>
+        <span class="logo-text">Football Cards</span>
+        <span class="logo-sub">Godot 4 · G1 Hub</span>
       </div>
+    </a>
+    <div class="hdr-stats">
+      <div class="hdr-pill"><span>168</span>Jugadores</div>
+      <div class="hdr-pill"><span>17</span>Cartas Esp.</div>
+      <div class="hdr-pill"><span>6</span>Formaciones</div>
+      <div class="hdr-pill"><span style="color:var(--gold)">v2.0</span>Godot 4</div>
+    </div>
+  </div>
+</header>
 
-      <div class="badge-bar">
-        <span class="badge green">● 100% Paridad & Tests OK</span>
-        <span class="badge blue">● Godot 4.7 (gl_compatibility)</span>
-        <span class="badge gold">● 168 Futbolistas | 17 Especiales</span>
-        <a href="./downloads/Football-Cards-Godot-3D.apk" class="badge green" style="text-decoration:none; cursor:pointer;" download>
-          📲 Descargar APK (28 MB)
-        </a>
-        <a href="https://github.com/pabloprietorecio-afk/Football-Cards-Godot" target="_blank" class="btn-github">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-          Repo GitHub
-        </a>
+<!-- TABS -->
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab on" data-tab="home">🏠 Inicio</button>
+    <button class="tab" data-tab="match">⚽ Simulador</button>
+    <button class="tab" data-tab="roster">👥 Plantilla</button>
+    <button class="tab" data-tab="tactics">📐 Táctica</button>
+    <button class="tab" data-tab="packs">🎁 Sobres</button>
+    <button class="tab" data-tab="specials">✨ Especiales</button>
+    <button class="tab" data-tab="build">🔧 Build & CI</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main>
+
+<!-- ── TAB: HOME ── -->
+<div class="panel on" id="tab-home">
+  <div class="hero">
+    <h1>Football Cards<br><span>Migración a Godot 4</span></h1>
+    <p>Juego de cartas de fútbol estratégico con 168 jugadores reales, 17 cartas especiales, 6 formaciones tácticas y motor de partidos probabilístico. Migrado de JavaScript a Godot 4 para Android.</p>
+    <div class="hero-tags">
+      <span class="hero-tag">⚡ Godot 4.4+</span>
+      <span class="hero-tag">📱 Android APK</span>
+      <span class="hero-tag">🎮 GDScript</span>
+      <span class="hero-tag">🎲 Motor de Partidos</span>
+      <span class="hero-tag">🧪 Tests CI/CD</span>
+    </div>
+  </div>
+
+  <div class="status-grid">
+    <div class="status-card">
+      <div class="status-label">Jugadores</div>
+      <div class="status-val" style="color:var(--green)">168</div>
+      <div class="status-sub">145 campo · 23 porteros</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
+    </div>
+    <div class="status-card">
+      <div class="status-label">Scripts GDScript</div>
+      <div class="status-val" style="color:var(--cyan)">38</div>
+      <div class="status-sub">Motor + UI + Audio + IA</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:85%"></div></div>
+    </div>
+    <div class="status-card">
+      <div class="status-label">Cartas Especiales</div>
+      <div class="status-val" style="color:var(--gold)">17</div>
+      <div class="status-sub">VAR · Misil · Paradón · +14</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
+    </div>
+    <div class="status-card">
+      <div class="status-label">Build Status</div>
+      <div class="status-val" style="font-size:1rem;margin-top:.3rem">
+        <span class="status-dot dot-yellow"></span>CI Configurado
+      </div>
+      <div class="status-sub">GitHub Actions · APK Export</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:75%"></div></div>
+    </div>
+  </div>
+
+  <!-- APK download -->
+  <div class="apk-card" style="margin-bottom:1.5rem">
+    <div class="apk-icon">📱</div>
+    <div class="apk-info">
+      <div class="apk-title">APK de Prueba — v1.0.0-preview</div>
+      <div class="apk-desc">Build de desarrollo exportado desde Football-Cards-Godot. Motor de partidos funcional, 168 jugadores, cartas especiales, formaciones tácticas.</div>
+    </div>
+    <div class="apk-actions">
+      <a href="https://github.com/pabloprietorecio-afk/Football-Cards-Godot/releases/tag/v1.0.0-preview" target="_blank" class="btn btn-primary">⬇ Descargar APK</a>
+      <a href="https://github.com/pabloprietorecio-afk/Football-Cards-Godot" target="_blank" class="btn btn-ghost btn-sm">📂 Repo</a>
+    </div>
+  </div>
+
+  <!-- Timeline -->
+  <div class="sec-title">Progreso de Migración <span class="badge">G1</span></div>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-dot done"></div>
+      <div class="tl-content">
+        <div class="tl-title">Extracción de datos <span class="tl-tag tag-done">✓ Completo</span></div>
+        168 jugadores, 6 formaciones, 17 especiales, meta de carrera — JSON verificados
       </div>
     </div>
-  </header>
+    <div class="tl-item">
+      <div class="tl-dot done"></div>
+      <div class="tl-content">
+        <div class="tl-title">Arquitectura GDScript <span class="tl-tag tag-done">✓ Completo</span></div>
+        38 scripts: MatchEngine, BotController, PenaltyEngine, CardMatch, AppShell, AudioDirector
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot done"></div>
+      <div class="tl-content">
+        <div class="tl-title">Tests de Regresión <span class="tl-tag tag-done">✓ Completo</span></div>
+        SMOKE_OK · REGRESSION_STATIC_OK · CAREER_UI_STATIC_OK · MANAGER_ECONOMY_UI_OK
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot done"></div>
+      <div class="tl-content">
+        <div class="tl-title">CI/CD Pipeline <span class="tl-tag tag-done">✓ Completo</span></div>
+        GitHub Actions con Godot 4.4, export Android, keystore automático
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot wip"></div>
+      <div class="tl-content">
+        <div class="tl-title">APK Android Final <span class="tl-tag tag-wip">⚙ En proceso</span></div>
+        Export preset configurado, templates instalados, build en validación final
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-content">
+        <div class="tl-title">Visuales 3D Premium <span class="tl-tag tag-next">Siguiente</span></div>
+        +100 animaciones, jugadores hiperrealistas, césped next-gen, iluminación PBR
+      </div>
+    </div>
+  </div>
+</div>
 
-  <!-- NAVIGATION TABS -->
-  <nav class="tabs">
-    <button class="tab-btn active" onclick="switchTab('3d-proto')">🎮 Prototipo 3D y Penaltis</button>
-    <button class="tab-btn" onclick="switchTab('card-match')">🃏 Simulador de Partido</button>
-    <button class="tab-btn" onclick="switchTab('tactics')">📐 Pizarra y Formaciones</button>
-    <button class="tab-btn" onclick="switchTab('packs')">🎁 Sobres y Mercado</button>
-    <button class="tab-btn" onclick="switchTab('roster')">👥 Colección (168 Jugadores)</button>
-    <button class="tab-btn" onclick="switchTab('specials')">✨ Cartas Especiales (17)</button>
-    <button class="tab-btn" onclick="switchTab('audio')">🔊 Mesa de Audio 3D (75 FX)</button>
-    <button class="tab-btn" onclick="switchTab('objectives')">📋 10 Objetivos y Tests</button>
-  </nav>
+<!-- ── TAB: MATCH SIMULATOR ── -->
+<div class="panel" id="tab-match">
+  <div class="sec-title">Simulador de Partido <span class="badge">168 jugadores</span></div>
 
-  <!-- MAIN VIEW -->
-  <main>
-    <div style="background: linear-gradient(135deg, rgba(0, 230, 118, 0.12), rgba(0, 176, 255, 0.12)); border: 1px solid rgba(0, 230, 118, 0.3); border-radius: 14px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-      <div style="display:flex; align-items:center; gap:0.8rem;">
-        <div style="font-size:2rem;">📲</div>
+  <div class="match-layout">
+    <!-- Team A -->
+    <div class="team-selector">
+      <div class="team-name">🔵 Equipo Local</div>
+      <div style="margin-bottom:.5rem">
+        <select class="filter-select" style="width:100%" id="match-p1" onchange="pickPlayer('p1',this.value)">
+          <option value="">— Selecciona jugador —</option>
+        </select>
+      </div>
+      <div id="p1-card" style="display:none"></div>
+    </div>
+
+    <!-- VS / Controls -->
+    <div class="match-vs">
+      <div class="vs-text">VS</div>
+      <div class="score-display">
+        <span class="team-score" id="score-a">0</span>
+        <span class="score-sep">:</span>
+        <span class="team-score" id="score-b">0</span>
+      </div>
+      <div class="btn-row" style="flex-direction:column;align-items:center;gap:.4rem;margin-top:.5rem">
+        <button class="btn btn-primary" onclick="simMatch()">⚽ Simular</button>
+        <button class="btn btn-ghost btn-sm" onclick="simN(5)">× 5</button>
+        <button class="btn btn-ghost btn-sm" onclick="resetMatch()">↺ Reset</button>
+      </div>
+      <div style="font-size:.7rem;color:var(--muted);margin-top:.5rem;text-align:center" id="match-result"></div>
+    </div>
+
+    <!-- Team B -->
+    <div class="team-selector">
+      <div class="team-name">🔴 Equipo Visitante</div>
+      <div style="margin-bottom:.5rem">
+        <select class="filter-select" style="width:100%" id="match-p2" onchange="pickPlayer('p2',this.value)">
+          <option value="">— Selecciona jugador —</option>
+        </select>
+      </div>
+      <div id="p2-card" style="display:none"></div>
+    </div>
+  </div>
+
+  <div style="margin-top:1rem">
+    <div style="font-size:.75rem;font-weight:600;color:var(--muted);margin-bottom:.4rem">Registro del partido</div>
+    <div class="match-log" id="match-log">
+      <div class="log-entry" style="color:var(--muted)">Selecciona dos jugadores y pulsa Simular ⚽</div>
+    </div>
+  </div>
+
+  <!-- Special card play -->
+  <div style="margin-top:1rem">
+    <div style="font-size:.75rem;font-weight:600;color:var(--muted);margin-bottom:.5rem">Jugar carta especial</div>
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap" id="special-quick"></div>
+  </div>
+</div>
+
+<!-- ── TAB: ROSTER ── -->
+<div class="panel" id="tab-roster">
+  <div class="sec-title">Colección <span class="badge" id="roster-count">168 jugadores</span></div>
+
+  <div class="filter-bar">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" placeholder="Buscar jugador..." id="search-player" oninput="filterRoster()">
+    </div>
+    <select class="filter-select" id="filter-pos" onchange="filterRoster()">
+      <option value="">Posición</option>
+      <option value="DEL">DEL</option>
+      <option value="MED">MED</option>
+      <option value="DEF">DEF</option>
+      <option value="POR">POR</option>
+    </select>
+    <select class="filter-select" id="filter-rarity" onchange="filterRoster()">
+      <option value="">Rareza</option>
+      <option value="Legendaria">⭐ Legendaria</option>
+      <option value="Épica">🟣 Épica</option>
+      <option value="Rara">🔵 Rara</option>
+      <option value="Infrecuente">🟢 Infrecuente</option>
+      <option value="Común">⚪ Común</option>
+    </select>
+    <select class="filter-select" id="sort-players" onchange="filterRoster()">
+      <option value="ovr">OVR ↓</option>
+      <option value="spd">Velocidad ↓</option>
+      <option value="name">Nombre A-Z</option>
+      <option value="value">Valor ↓</option>
+    </select>
+  </div>
+
+  <div class="grid g3" id="roster-grid"></div>
+  <div class="pcount" id="roster-footer"></div>
+</div>
+
+<!-- ── TAB: TACTICS ── -->
+<div class="panel" id="tab-tactics">
+  <div class="sec-title">Pizarra Táctica <span class="badge">6 formaciones</span></div>
+
+  <div class="tactic-wrap">
+    <div>
+      <div class="filter-bar" style="margin-bottom:1rem">
+        <select class="filter-select" id="formation-select" onchange="drawFormation(this.value)">
+          <option value="4-4-2">4-4-2 · Equilibrado</option>
+          <option value="4-3-3">4-3-3 · Ataque</option>
+          <option value="4-2-3-1">4-2-3-1 · Control</option>
+          <option value="3-5-2">3-5-2 · Dominio centro</option>
+          <option value="5-3-2">5-3-2 · Defensivo</option>
+          <option value="3-4-3">3-4-3 · Ultra ofensivo</option>
+        </select>
+      </div>
+      <div class="pitch" id="pitch-board">
+        <svg class="pitch-svg" viewBox="0 0 100 140" preserveAspectRatio="none">
+          <rect x="0" y="0" width="100" height="140" fill="#1a3a1a"/>
+          <rect x="10" y="5" width="80" height="130" fill="none" stroke="white" stroke-width=".8"/>
+          <line x1="10" y1="70" x2="90" y2="70" stroke="white" stroke-width=".5"/>
+          <circle cx="50" cy="70" r="10" fill="none" stroke="white" stroke-width=".5"/>
+          <rect x="30" y="5" width="40" height="18" fill="none" stroke="white" stroke-width=".5"/>
+          <rect x="30" y="117" width="40" height="18" fill="none" stroke="white" stroke-width=".5"/>
+          <rect x="38" y="5" width="24" height="8" fill="none" stroke="white" stroke-width=".5"/>
+          <rect x="38" y="127" width="24" height="8" fill="none" stroke="white" stroke-width=".5"/>
+          <circle cx="50" cy="12" r="2" fill="white" opacity=".5"/>
+          <circle cx="50" cy="128" r="2" fill="white" opacity=".5"/>
+          <circle cx="50" cy="70" r="1" fill="white" opacity=".8"/>
+        </svg>
+        <div id="pitch-players"></div>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:.75rem">
+        <div class="status-label">Formación activa</div>
+        <div style="font-size:1.3rem;font-weight:800;color:var(--green);margin:.25rem 0" id="form-name">4-4-2</div>
+        <div style="font-size:.75rem;color:var(--muted2)" id="form-style">Equilibrado</div>
+      </div>
+      <div class="card">
+        <div class="status-label">Posiciones</div>
+        <div id="form-positions" style="margin-top:.5rem;font-size:.75rem;line-height:2;color:var(--muted2)"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TAB: PACKS ── -->
+<div class="panel" id="tab-packs">
+  <div class="sec-title">Apertura de Sobres <span class="badge">Sistema de rareza</span></div>
+
+  <div class="pack-grid">
+    <div class="pack-card" style="--glow:linear-gradient(135deg,rgba(148,163,184,.08),transparent)" onclick="openPack('basic')">
+      <div class="pack-emoji">📦</div>
+      <div class="pack-name">Sobre Básico</div>
+      <div class="pack-desc">3 cartas · 50% Común</div>
+      <div class="pack-price">🪙 500</div>
+    </div>
+    <div class="pack-card" style="--glow:linear-gradient(135deg,rgba(0,230,118,.1),transparent)" onclick="openPack('rare')">
+      <div class="pack-emoji">💚</div>
+      <div class="pack-name">Sobre Raro</div>
+      <div class="pack-desc">3 cartas · 1 Rara asegurada</div>
+      <div class="pack-price">🪙 1500</div>
+    </div>
+    <div class="pack-card" style="--glow:linear-gradient(135deg,rgba(41,121,255,.12),transparent)" onclick="openPack('epic')">
+      <div class="pack-emoji">💎</div>
+      <div class="pack-name">Sobre Épico</div>
+      <div class="pack-desc">4 cartas · 1 Épica garantizada</div>
+      <div class="pack-price">🪙 3500</div>
+    </div>
+    <div class="pack-card" style="--glow:linear-gradient(135deg,rgba(255,214,0,.12),transparent)" onclick="openPack('legend')">
+      <div class="pack-emoji">⭐</div>
+      <div class="pack-name">Sobre Leyenda</div>
+      <div class="pack-desc">5 cartas · Legendaria poss.</div>
+      <div class="pack-price">🪙 8000</div>
+    </div>
+    <div class="pack-card" style="--glow:linear-gradient(135deg,rgba(170,0,255,.12),transparent)" onclick="openPack('special')">
+      <div class="pack-emoji">✨</div>
+      <div class="pack-name">Sobre Especiales</div>
+      <div class="pack-desc">3 cartas especiales</div>
+      <div class="pack-price">🪙 2000</div>
+    </div>
+    <div class="pack-card" style="--glow:linear-gradient(135deg,rgba(255,23,68,.1),transparent)" onclick="openPack('mega')">
+      <div class="pack-emoji">🏆</div>
+      <div class="pack-name">Mega Sobre</div>
+      <div class="pack-desc">10 cartas · Todo posible</div>
+      <div class="pack-price">🪙 15000</div>
+    </div>
+  </div>
+
+  <div style="font-size:.75rem;font-weight:600;color:var(--muted);margin-bottom:.5rem">Resultado</div>
+  <div class="pull-result" id="pack-result">
+    <span style="color:var(--muted);font-size:.8rem">Abre un sobre para ver las cartas ✨</span>
+  </div>
+  <div style="margin-top:.5rem;font-size:.7rem;color:var(--muted)" id="pack-stats"></div>
+</div>
+
+<!-- ── TAB: SPECIALS ── -->
+<div class="panel" id="tab-specials">
+  <div class="sec-title">Cartas Especiales <span class="badge">17 cartas</span></div>
+  <div class="grid g3" id="specials-grid"></div>
+</div>
+
+<!-- ── TAB: BUILD ── -->
+<div class="panel" id="tab-build">
+  <div class="sec-title">Build & CI/CD <span class="badge">GitHub Actions</span></div>
+
+  <div class="status-grid">
+    <div class="status-card">
+      <div class="status-label">Godot Version</div>
+      <div class="status-val" style="color:var(--blue2)">4.4+</div>
+      <div class="status-sub">GDScript 2.0 · Android Export</div>
+    </div>
+    <div class="status-card">
+      <div class="status-label">Tests Passing</div>
+      <div class="status-val" style="color:var(--green)">5/5</div>
+      <div class="status-sub">Smoke · Regression · Career · Economy · UI</div>
+    </div>
+    <div class="status-card">
+      <div class="status-label">Scripts</div>
+      <div class="status-val" style="color:var(--cyan)">38</div>
+      <div class="status-sub">GDScript compilados sin errores</div>
+    </div>
+    <div class="status-card">
+      <div class="status-label">CI Pipeline</div>
+      <div class="status-val" style="font-size:.9rem;color:var(--gold)"><span class="status-dot dot-yellow"></span>Activo</div>
+      <div class="status-sub">Build APK en validación</div>
+    </div>
+  </div>
+
+  <div class="sec-title" style="margin-top:1.5rem">Tests Ejecutados</div>
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;font-family:var(--mono);font-size:.75rem;line-height:1.8;color:var(--muted2)">
+    <div style="color:var(--green)">✓ SMOKE_OK scripts=38 positions=145</div>
+    <div style="color:var(--green)">✓ REGRESSION_STATIC_OK audio=75 players=145</div>
+    <div style="color:var(--green)">✓ CAREER_UI_STATIC_OK</div>
+    <div style="color:var(--green)">✓ MANAGER_ECONOMY_UI_OK</div>
+    <div style="color:var(--green)">✓ CONNECTED_UI_PRESENTATION_OK</div>
+    <div style="color:var(--cyan);margin-top:.5rem">→ Godot 4.3 headless: 0 errors</div>
+    <div style="color:var(--cyan)">→ GDScript type inference: all fixed</div>
+    <div style="color:var(--gold);margin-top:.5rem">⚙ APK export: validating preset config</div>
+  </div>
+
+  <div class="sec-title" style="margin-top:1.5rem">Repositorios</div>
+  <div style="display:flex;flex-direction:column;gap:.5rem">
+    <a href="https://github.com/pabloprietorecio-afk/Football-Cards-Godot" target="_blank" class="card" style="text-decoration:none;display:flex;align-items:center;gap:.75rem;padding:.85rem 1rem">
+      <span style="font-size:1.3rem">🎮</span>
+      <div>
+        <div style="font-size:.85rem;font-weight:700">Football-Cards-Godot</div>
+        <div style="font-size:.7rem;color:var(--muted)">Motor principal · GDScript · Android</div>
+      </div>
+      <span style="margin-left:auto;color:var(--muted);font-size:.8rem">↗</span>
+    </a>
+    <a href="https://github.com/pabloprietorecio-afk/Football-Cards" target="_blank" class="card" style="text-decoration:none;display:flex;align-items:center;gap:.75rem;padding:.85rem 1rem">
+      <span style="font-size:1.3rem">📄</span>
+      <div>
+        <div style="font-size:.85rem;font-weight:700">Football-Cards (Original)</div>
+        <div style="font-size:.7rem;color:var(--muted)">Juego web JavaScript legacy</div>
+      </div>
+      <span style="margin-left:auto;color:var(--muted);font-size:.8rem">↗</span>
+    </a>
+    <a href="https://github.com/pabloprietorecio-afk/Football-Cards-Godot/releases" target="_blank" class="card" style="text-decoration:none;display:flex;align-items:center;gap:.75rem;padding:.85rem 1rem">
+      <span style="font-size:1.3rem">📱</span>
+      <div>
+        <div style="font-size:.85rem;font-weight:700">Releases & APKs</div>
+        <div style="font-size:.7rem;color:var(--muted)">v1.0.0-preview disponible</div>
+      </div>
+      <span style="margin-left:auto;color:var(--muted);font-size:.8rem">↗</span>
+    </a>
+  </div>
+</div>
+
+</main>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  Football Cards · Godot 4 Migration G1 Hub · 
+  <a href="https://github.com/pabloprietorecio-afk/Football-Cards-Godot" target="_blank">GitHub</a> ·
+  <a href="https://github.com/pabloprietorecio-afk/Football-Cards-Godot/releases/tag/v1.0.0-preview" target="_blank">APK Preview</a>
+</footer>
+
+<script>
+// ═══════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════
+const PLAYERS = [{"id": "p0", "name": "Lionel Messi", "flag": "🇦🇷", "pos": "DEL", "ovr": 86, "rarity": "Legendaria", "spd": 33.9, "stats": {"VEL": 83, "REG": 99, "PAS": 75, "TIR": 89, "DEF": 55, "FIS": 81}, "country": "Argentina", "value": 12000000, "tier": "Leyenda", "trait": "mago"}, {"id": "p1", "name": "Cristiano Ronaldo", "flag": "🇵🇹", "pos": "DEL", "ovr": 88, "rarity": "Legendaria", "spd": 33.5, "stats": {"VEL": 81, "REG": 90, "PAS": 82, "TIR": 99, "DEF": 61, "FIS": 81}, "country": "Portugal", "value": 16500000, "tier": "Leyenda", "trait": "finalizador"}, {"id": "p2", "name": "Diego Maradona", "flag": "🇦🇷", "pos": "MED", "ovr": 88, "rarity": "Legendaria", "spd": 33.2, "stats": {"VEL": 79, "REG": 97, "PAS": 92, "TIR": 80, "DEF": 81, "FIS": 86}, "country": "Argentina", "value": 16500000, "tier": "Leyenda", "trait": "mago"}, {"id": "p3", "name": "Pelé", "flag": "🇧🇷", "pos": "DEL", "ovr": 87, "rarity": "Legendaria", "spd": 33.9, "stats": {"VEL": 83, "REG": 88, "PAS": 75, "TIR": 99, "DEF": 55, "FIS": 80}, "country": "Brasil", "value": 14000000, "tier": "Leyenda", "trait": "finalizador"}, {"id": "p4", "name": "Johan Cruyff", "flag": "🇳🇱", "pos": "DEL", "ovr": 85, "rarity": "Legendaria", "spd": 32.2, "stats": {"VEL": 74, "REG": 91, "PAS": 85, "TIR": 92, "DEF": 58, "FIS": 81}, "country": "Países Bajos", "value": 10500000, "tier": "Leyenda", "trait": "capitan"}, {"id": "p5", "name": "Zinedine Zidane", "flag": "🇫🇷", "pos": "MED", "ovr": 88, "rarity": "Legendaria", "spd": 31.6, "stats": {"VEL": 70, "REG": 91, "PAS": 99, "TIR": 80, "DEF": 80, "FIS": 85}, "country": "Francia", "value": 16500000, "tier": "Leyenda", "trait": "mago"}, {"id": "p6", "name": "Ronaldinho", "flag": "🇧🇷", "pos": "MED", "ovr": 88, "rarity": "Legendaria", "spd": 33.5, "stats": {"VEL": 81, "REG": 96, "PAS": 91, "TIR": 79, "DEF": 79, "FIS": 87}, "country": "Brasil", "value": 16500000, "tier": "Leyenda", "trait": "mago"}, {"id": "p7", "name": "Andrés Iniesta", "flag": "🇪🇸", "pos": "MED", "ovr": 89, "rarity": "Legendaria", "spd": 31.6, "stats": {"VEL": 70, "REG": 92, "PAS": 99, "TIR": 80, "DEF": 81, "FIS": 87}, "country": "España", "value": 19500000, "tier": "Leyenda", "trait": "mago"}, {"id": "p8", "name": "Xavi Hernández", "flag": "🇪🇸", "pos": "MED", "ovr": 88, "rarity": "Legendaria", "spd": 31.7, "stats": {"VEL": 71, "REG": 89, "PAS": 99, "TIR": 77, "DEF": 80, "FIS": 85}, "country": "España", "value": 16500000, "tier": "Leyenda", "trait": "capitan"}, {"id": "p9", "name": "Paolo Maldini", "flag": "🇮🇹", "pos": "DEF", "ovr": 86, "rarity": "Legendaria", "spd": 31.7, "stats": {"VEL": 71, "REG": 69, "PAS": 73, "TIR": 58, "DEF": 98, "FIS": 95}, "country": "Italia", "value": 12000000, "tier": "Leyenda", "trait": "muro"}, {"id": "p10", "name": "Franz Beckenbauer", "flag": "🇩🇪", "pos": "DEF", "ovr": 89, "rarity": "Legendaria", "spd": 31.9, "stats": {"VEL": 72, "REG": 74, "PAS": 80, "TIR": 63, "DEF": 99, "FIS": 99}, "country": "Alemania", "value": 19500000, "tier": "Leyenda", "trait": "capitan"}, {"id": "p11", "name": "Ronaldo Nazário", "flag": "🇧🇷", "pos": "DEL", "ovr": 86, "rarity": "Legendaria", "spd": 33.2, "stats": {"VEL": 79, "REG": 85, "PAS": 76, "TIR": 99, "DEF": 59, "FIS": 77}, "country": "Brasil", "value": 12000000, "tier": "Leyenda", "trait": "finalizador"}, {"id": "p12", "name": "Thierry Henry", "flag": "🇫🇷", "pos": "DEL", "ovr": 90, "rarity": "Legendaria", "spd": 35.8, "stats": {"VEL": 94, "REG": 94, "PAS": 80, "TIR": 95, "DEF": 61, "FIS": 83}, "country": "Francia", "value": 23000000, "tier": "Leyenda", "trait": "finalizador"}, {"id": "p13", "name": "Kylian Mbappé", "flag": "🇫🇷", "pos": "DEL", "ovr": 90, "rarity": "Legendaria", "spd": 35.7, "stats": {"VEL": 93, "REG": 94, "PAS": 81, "TIR": 93, "DEF": 61, "FIS": 85}, "country": "Francia", "value": 23000000, "tier": "Leyenda", "trait": "motor"}, {"id": "p14", "name": "Erling Haaland", "flag": "🇳🇴", "pos": "DEL", "ovr": 91, "rarity": "Legendaria", "spd": 36.0, "stats": {"VEL": 95, "REG": 91, "PAS": 81, "TIR": 99, "DEF": 61, "FIS": 81}, "country": "Noruega", "value": 26500000, "tier": "Leyenda", "trait": "finalizador"}, {"id": "p15", "name": "Luka Modrić", "flag": "🇭🇷", "pos": "MED", "ovr": 88, "rarity": "Legendaria", "spd": 31.5, "stats": {"VEL": 70, "REG": 89, "PAS": 99, "TIR": 81, "DEF": 81, "FIS": 86}, "country": "Croacia", "value": 16500000, "tier": "Leyenda", "trait": "motor"}, {"id": "p16", "name": "Neymar", "flag": "🇧🇷", "pos": "DEL", "ovr": 82, "rarity": "Épica", "spd": 34.6, "stats": {"VEL": 87, "REG": 91, "PAS": 71, "TIR": 83, "DEF": 53, "FIS": 73}, "country": "Brasil", "value": 6500000, "tier": "Crack", "trait": null}, {"id": "p17", "name": "Kevin De Bruyne", "flag": "🇧🇪", "pos": "MED", "ovr": 83, "rarity": "Épica", "spd": 31.3, "stats": {"VEL": 68, "REG": 86, "PAS": 95, "TIR": 71, "DEF": 74, "FIS": 80}, "country": "Bélgica", "value": 7600000, "tier": "Crack", "trait": null}, {"id": "p18", "name": "Mohamed Salah", "flag": "🇪🇬", "pos": "DEL", "ovr": 83, "rarity": "Épica", "spd": 36.6, "stats": {"VEL": 98, "REG": 85, "PAS": 69, "TIR": 85, "DEF": 51, "FIS": 71}, "country": "Egipto", "value": 7600000, "tier": "Crack", "trait": null}, {"id": "p19", "name": "Robert Lewandowski", "flag": "🇵🇱", "pos": "DEL", "ovr": 86, "rarity": "Épica", "spd": 33.8, "stats": {"VEL": 82, "REG": 87, "PAS": 76, "TIR": 97, "DEF": 56, "FIS": 79}, "country": "Polonia", "value": 12000000, "tier": "Leyenda", "trait": null}, {"id": "p20", "name": "Karim Benzema", "flag": "🇫🇷", "pos": "DEL", "ovr": 86, "rarity": "Épica", "spd": 33.2, "stats": {"VEL": 79, "REG": 87, "PAS": 76, "TIR": 98, "DEF": 57, "FIS": 76}, "country": "Francia", "value": 12000000, "tier": "Leyenda", "trait": null}, {"id": "p21", "name": "Luis Suárez", "flag": "🇺🇾", "pos": "DEL", "ovr": 87, "rarity": "Épica", "spd": 33.9, "stats": {"VEL": 83, "REG": 86, "PAS": 77, "TIR": 99, "DEF": 57, "FIS": 78}, "country": "Uruguay", "value": 14000000, "tier": "Leyenda", "trait": null}, {"id": "p22", "name": "Zlatan Ibrahimović", "flag": "🇸🇪", "pos": "DEL", "ovr": 83, "rarity": "Épica", "spd": 33.6, "stats": {"VEL": 81, "REG": 84, "PAS": 76, "TIR": 88, "DEF": 53, "FIS": 87}, "country": "Suecia", "value": 7600000, "tier": "Crack", "trait": null}, {"id": "p23", "name": "Andrea Pirlo", "flag": "🇮🇹", "pos": "MED", "ovr": 81, "rarity": "Épica", "spd": 31.4, "stats": {"VEL": 69, "REG": 79, "PAS": 95, "TIR": 69, "DEF": 69, "FIS": 77}, "country": "Italia", "value": 5600000, "tier": "Crack", "trait": null}, {"id": "p24", "name": "Toni Kroos", "flag": "🇩🇪", "pos": "MED", "ovr": 86, "rarity": "Épica", "spd": 31.6, "stats": {"VEL": 70, "REG": 86, "PAS": 98, "TIR": 75, "DEF": 77, "FIS": 80}, "country": "Alemania", "value": 12000000, "tier": "Leyenda", "trait": null}, {"id": "p25", "name": "Virgil van Dijk", "flag": "🇳🇱", "pos": "DEF", "ovr": 85, "rarity": "Épica", "spd": 32.3, "stats": {"VEL": 74, "REG": 68, "PAS": 73, "TIR": 55, "DEF": 96, "FIS": 91}, "country": "Países Bajos", "value": 10500000, "tier": "Leyenda", "trait": null}, {"id": "p26", "name": "Cafu", "flag": "🇧🇷", "pos": "DEF", "ovr": 85, "rarity": "Épica", "spd": 35.2, "stats": {"VEL": 90, "REG": 70, "PAS": 73, "TIR": 59, "DEF": 91, "FIS": 88}, "country": "Brasil", "value": 10500000, "tier": "Leyenda", "trait": null}, {"id": "p27", "name": "Roberto Carlos", "flag": "🇧🇷", "pos": "DEF", "ovr": 80, "rarity": "Épica", "spd": 35.3, "stats": {"VEL": 91, "REG": 64, "PAS": 67, "TIR": 55, "DEF": 85, "FIS": 83}, "country": "Brasil", "value": 4700000, "tier": "Crack", "trait": null}, {"id": "p28", "name": "Carles Puyol", "flag": "🇪🇸", "pos": "DEF", "ovr": 86, "rarity": "Épica", "spd": 31.6, "stats": {"VEL": 70, "REG": 67, "PAS": 75, "TIR": 56, "DEF": 98, "FIS": 92}, "country": "España", "value": 12000000, "tier": "Leyenda", "trait": null}, {"id": "p29", "name": "Fabio Cannavaro", "flag": "🇮🇹", "pos": "DEF", "ovr": 85, "rarity": "Épica", "spd": 31.7, "stats": {"VEL": 71, "REG": 67, "PAS": 71, "TIR": 55, "DEF": 98, "FIS": 92}, "country": "Italia", "value": 10500000, "tier": "Leyenda", "trait": null}, {"id": "p30", "name": "Sergio Ramos", "flag": "🇪🇸", "pos": "DEF", "ovr": 86, "rarity": "Épica", "spd": 31.6, "stats": {"VEL": 70, "REG": 65, "PAS": 74, "TIR": 59, "DEF": 97, "FIS": 95}, "country": "España", "value": 12000000, "tier": "Leyenda", "trait": null}, {"id": "p31", "name": "Lamine Yamal", "flag": "🇪🇸", "pos": "DEL", "ovr": 86, "rarity": "Épica", "spd": 34.3, "stats": {"VEL": 85, "REG": 97, "PAS": 76, "TIR": 88, "DEF": 56, "FIS": 79}, "country": "España", "value": 12000000, "tier": "Leyenda", "trait": null}, {"id": "p32", "name": "Jude Bellingham", "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "pos": "MED", "ovr": 82, "rarity": "Épica", "spd": 32.2, "stats": {"VEL": 74, "REG": 82, "PAS": 88, "TIR": 74, "DEF": 74, "FIS": 87}, "country": "Inglaterra", "value": 6500000, "tier": "Crack", "trait": null}, {"id": "p33", "name": "Vinícius Júnior", "flag": "🇧🇷", "pos": "DEL", "ovr": 86, "rarity": "Épica", "spd": 36, "stats": {"VEL": 95, "REG": 87, "PAS": 75, "TIR": 89, "DEF": 55, "FIS": 79}, "country": "Brasil", "value": 12000000, "tier": "Leyenda", "trait": null}, {"id": "p34", "name": "Rodri", "flag": "🇪🇸", "pos": "MED", "ovr": 79, "rarity": "Épica", "spd": 32.1, "stats": {"VEL": 73, "REG": 75, "PAS": 85, "TIR": 70, "DEF": 81, "FIS": 81}, "country": "España", "value": 4100000, "tier": "Crack", "trait": null}, {"id": "p35", "name": "Harry Kane", "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "pos": "DEL", "ovr": 85, "rarity": "Épica", "spd": 33.1, "stats": {"VEL": 79, "REG": 85, "PAS": 77, "TIR": 98, "DEF": 55, "FIS": 79}, "country": "Inglaterra", "value": 10500000, "tier": "Leyenda", "trait": null}, {"id": "p36", "name": "Ferenc Puskás", "flag": "🇭🇺", "pos": "DEL", "ovr": 83, "rarity": "Épica", "spd": 33.9, "stats": {"VEL": 83, "REG": 83, "PAS": 73, "TIR": 93, "DEF": 51, "FIS": 74}, "country": "Hungría", "value": 7600000, "tier": "Crack", "trait": null}, {"id": "p37", "name": "Alfredo Di Stéfano", "flag": "🇦🇷", "pos": "DEL", "ovr": 84, "rarity": "Épica", "spd": 32.6, "stats": {"VEL": 76, "REG": 87, "PAS": 85, "TIR": 91, "DEF": 56, "FIS": 78}, "country": "Argentina", "value": 8900000, "tier": "Crack", "trait": null}, {"id": "p38", "name": "Michel Platini", "flag": "🇫🇷", "pos": "MED", "ovr": 80, "rarity": "Épica", "spd": 31.5, "stats": {"VEL": 70, "REG": 79, "PAS": 92, "TIR": 67, "DEF": 70, "FIS": 76}, "country": "Francia", "value": 4700000, "tier": "Crack", "trait": null}, {"id": "p39", "name": "Marco van Basten", "flag": "🇳🇱", "pos": "DEL", "ovr": 84, "rarity": "Épica", "spd": 33.9, "stats": {"VEL": 83, "REG": 83, "PAS": 69, "TIR": 97, "DEF": 52, "FIS": 73}, "country": "Países Bajos", "value": 8900000, "tier": "Crack", "trait": null}, {"id": "p40", "name": "Franco Baresi", "flag": "🇮🇹", "pos": "DEF", "ovr": 87, "rarity": "Épica", "spd": 32, "stats": {"VEL": 72, "REG": 69, "PAS": 75, "TIR": 59, "DEF": 99, "FIS": 94}, "country": "Italia", "value": 14000000, "tier": "Leyenda", "trait": null}, {"id": "p41", "name": "Lothar Matthäus", "flag": "🇩🇪", "pos": "MED", "ovr": 82, "rarity": "Épica", "spd": 32.6, "stats": {"VEL": 76, "REG": 82, "PAS": 86, "TIR": 74, "DEF": 76, "FIS": 87}, "country": "Alemania", "value": 6500000, "tier": "Crack", "trait": null}, {"id": "p42", "name": "Zico", "flag": "🇧🇷", "pos": "MED", "ovr": 84, "rarity": "Épica", "spd": 30.8, "stats": {"VEL": 66, "REG": 84, "PAS": 97, "TIR": 75, "DEF": 76, "FIS": 78}, "country": "Brasil", "value": 8900000, "tier": "Crack", "trait": null}, {"id": "p43", "name": "Gabriel Batistuta", "flag": "🇦🇷", "pos": "DEL", "ovr": 86, "rarity": "Épica", "spd": 33.6, "stats": {"VEL": 81, "REG": 86, "PAS": 75, "TIR": 99, "DEF": 53, "FIS": 76}, "country": "Argentina", "value": 12000000, "tier": "Leyenda", "trait": null}, {"id": "p44", "name": "Eusébio", "flag": "🇵🇹", "pos": "DEL", "ovr": 85, "rarity": "Épica", "spd": 36.1, "stats": {"VEL": 95, "REG": 87, "PAS": 75, "TIR": 87, "DEF": 53, "FIS": 76}, "country": "Portugal", "value": 10500000, "tier": "Leyenda", "trait": null}, {"id": "p45", "name": "Luís Figo", "flag": "🇵🇹", "pos": "MED", "ovr": 82, "rarity": "Épica", "spd": 32.8, "stats": {"VEL": 77, "REG": 90, "PAS": 87, "TIR": 71, "DEF": 73, "FIS": 77}, "country": "Portugal", "value": 6500000, "tier": "Crack", "trait": null}, {"id": "p46", "name": "Pedri", "flag": "🇪🇸", "pos": "MED", "ovr": 77, "rarity": "Rara", "spd": 31.1, "stats": {"VEL": 67, "REG": 79, "PAS": 88, "TIR": 67, "DEF": 67, "FIS": 70}, "country": "España", "value": 3000000, "tier": "Crack", "trait": null}, {"id": "p47", "name": "Gavi", "flag": "🇪🇸", "pos": "MED", "ovr": 72, "rarity": "Rara", "spd": 32.3, "stats": {"VEL": 74, "REG": 72, "PAS": 75, "TIR": 61, "DEF": 66, "FIS": 79}, "country": "España", "value": 1400000, "tier": "Titular", "trait": null}, {"id": "p48", "name": "Antoine Griezmann", "flag": "🇫🇷", "pos": "DEL", "ovr": 75, "rarity": "Rara", "spd": 33, "stats": {"VEL": 78, "REG": 76, "PAS": 64, "TIR": 80, "DEF": 48, "FIS": 70}, "country": "Francia", "value": 2200000, "tier": "Crack", "trait": null}, {"id": "p49", "name": "Son Heung-min", "flag": "🇰🇷", "pos": "DEL", "ovr": 80, "rarity": "Rara", "spd": 35.7, "stats": {"VEL": 93, "REG": 80, "PAS": 70, "TIR": 84, "DEF": 47, "FIS": 69}, "country": "Corea del Sur", "value": 4700000, "tier": "Crack", "trait": null}, {"id": "p50", "name": "Sadio Mané", "flag": "🇸🇳", "pos": "DEL", "ovr": 77, "rarity": "Rara", "spd": 35.9, "stats": {"VEL": 94, "REG": 77, "PAS": 62, "TIR": 80, "DEF": 44, "FIS": 65}, "country": "Senegal", "value": 3000000, "tier": "Crack", "trait": null}, {"id": "p51", "name": "Eden Hazard", "flag": "🇧🇪", "pos": "DEL", "ovr": 79, "rarity": "Rara", "spd": 34.5, "stats": {"VEL": 86, "REG": 86, "PAS": 67, "TIR": 82, "DEF": 47, "FIS": 69}, "country": "Bélgica", "value": 4100000, "tier": "Crack", "trait": null}, {"id": "p52", "name": "Didier Drogba", "flag": "🇨🇮", "pos": "DEL", "ovr": 78, "rarity": "Rara", "spd": 33.8, "stats": {"VEL": 82, "REG": 79, "PAS": 70, "TIR": 83, "DEF": 48, "FIS": 78}, "country": "Costa de Marfil", "value": 3500000, "tier": "Crack", "trait": null}, {"id": "p53", "name": "Samuel Eto'o", "flag": "🇨🇲", "pos": "DEL", "ovr": 77, "rarity": "Rara", "spd": 33.6, "stats": {"VEL": 81, "REG": 74, "PAS": 62, "TIR": 90, "DEF": 42, "FIS": 66}, "country": "Camerún", "value": 3000000, "tier": "Crack", "trait": null}, {"id": "p54", "name": "Francesco Totti", "flag": "🇮🇹", "pos": "MED", "ovr": 79, "rarity": "Rara", "spd": 31.5, "stats": {"VEL": 70, "REG": 76, "PAS": 91, "TIR": 68, "DEF": 70, "FIS": 72}, "country": "Italia", "value": 4100000, "tier": "Crack", "trait": null}, {"id": "p55", "name": "Alessandro Del Piero", "flag": "🇮🇹", "pos": "DEL", "ovr": 76, "rarity": "Rara", "spd": 33.8, "stats": {"VEL": 82, "REG": 85, "PAS": 66, "TIR": 77, "DEF": 46, "FIS": 66}, "country": "Italia", "value": 2500000, "tier": "Crack", "trait": null}, {"id": "p56", "name": "Steven Gerrard", "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "pos": "MED", "ovr": 76, "rarity": "Rara", "spd": 32.2, "stats": {"VEL": 74, "REG": 73, "PAS": 82, "TIR": 67, "DEF": 68, "FIS": 81}, "country": "Inglaterra", "value": 2500000, "tier": "Crack", "trait": null}, {"id": "p57", "name": "Frank Lampard", "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "pos": "MED", "ovr": 75, "rarity": "Rara", "spd": 32.3, "stats": {"VEL": 74, "REG": 75, "PAS": 79, "TIR": 76, "DEF": 67, "FIS": 73}, "country": "Inglaterra", "value": 2200000, "tier": "Crack", "trait": null}, {"id": "p58", "name": "Paul Scholes", "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "pos": "MED", "ovr": 73, "rarity": "Rara", "spd": 31.1, "stats": {"VEL": 67, "REG": 74, "PAS": 84, "TIR": 61, "DEF": 64, "FIS": 67}, "country": "Inglaterra", "value": 1600000, "tier": "Titular", "trait": null}, {"id": "p59", "name": "Patrick Vieira", "flag": "🇫🇷", "pos": "MED", "ovr": 71, "rarity": "Rara", "spd": 32.1, "stats": {"VEL": 73, "REG": 68, "PAS": 75, "TIR": 61, "DEF": 71, "FIS": 73}, "country": "Francia", "value": 1200000, "tier": "Titular", "trait": null}, {"id": "p60", "name": "Thiago Silva", "flag": "🇧🇷", "pos": "DEF", "ovr": 76, "rarity": "Rara", "spd": 31.6, "stats": {"VEL": 70, "REG": 56, "PAS": 60, "TIR": 44, "DEF": 86, "FIS": 83}, "country": "Brasil", "value": 2500000, "tier": "Crack", "trait": null}, {"id": "p61", "name": "Marcelo", "flag": "🇧🇷", "pos": "DEF", "ovr": 74, "rarity": "Rara", "spd": 33.7, "stats": {"VEL": 82, "REG": 68, "PAS": 60, "TIR": 47, "DEF": 79, "FIS": 76}, "country": "Brasil", "value": 1800000, "tier": "Titular", "trait": null}, {"id": "p62", "name": "Vincent Kompany", "flag": "🇧🇪", "pos": "DEF", "ovr": 79, "rarity": "Rara", "spd": 32.3, "stats": {"VEL": 74, "REG": 58, "PAS": 65, "TIR": 48, "DEF": 90, "FIS": 84}, "country": "Bélgica", "value": 4100000, "tier": "Crack", "trait": null}, {"id": "p63", "name": "Achraf Hakimi", "flag": "🇲🇦", "pos": "DEF", "ovr": 78, "rarity": "Rara", "spd": 36.4, "stats": {"VEL": 97, "REG": 61, "PAS": 64, "TIR": 52, "DEF": 81, "FIS": 81}, "country": "Marruecos", "value": 3500000, "tier": "Crack", "trait": null}, {"id": "p64", "name": "Kalidou Koulibaly", "flag": "🇸🇳", "pos": "DEF", "ovr": 78, "rarity": "Rara", "spd": 32.8, "stats": {"VEL": 77, "REG": 58, "PAS": 67, "TIR": 51, "DEF": 82, "FIS": 92}, "country": "Senegal", "value": 3500000, "tier": "Crack", "trait": null}, {"id": "p65", "name": "Rúben Dias", "flag": "🇵🇹", "pos": "DEF", "ovr": 77, "rarity": "Rara", "spd": 32.3, "stats": {"VEL": 74, "REG": 57, "PAS": 62, "TIR": 44, "DEF": 88, "FIS": 82}, "country": "Portugal", "value": 3000000, "tier": "Crack", "trait": null}, {"id": "p66", "name": "Ángel Di María", "flag": "🇦🇷", "pos": "MED", "ovr": 77, "rarity": "Rara", "spd": 32.9, "stats": {"VEL": 77, "REG": 82, "PAS": 82, "TIR": 65, "DEF": 68, "FIS": 71}, "country": "Argentina", "value": 3000000, "tier": "Crack", "trait": null}, {"id": "p67", "name": "Sergio Agüero", "flag": "🇦🇷", "pos": "DEL", "ovr": 79, "rarity": "Rara", "spd": 33.1, "stats": {"VEL": 79, "REG": 78, "PAS": 70, "TIR": 91, "DEF": 46, "FIS": 69}, "country": "Argentina", "value": 4100000, "tier": "Crack", "trait": null}, {"id": "p68", "name": "Bernardo Silva", "flag": "🇵🇹", "pos": "MED", "ovr": 77, "rarity": "Rara", "spd": 33.2, "stats": {"VEL": 79, "REG": 86, "PAS": 81, "TIR": 64, "DEF": 66, "FIS": 74}, "country": "Portugal", "value": 3000000, "tier": "Crack", "trait": null}, {"id": "p69", "name": "Jamal Musiala", "flag": "🇩🇪", "pos": "MED", "ovr": 77, "rarity": "Rara", "spd": 33.2, "stats": {"VEL": 79, "REG": 86, "PAS": 80, "TIR": 68, "DEF": 67, "FIS": 72}, "country": "Alemania", "value": 3000000, "tier": "Crack", "trait": null}, {"id": "p70", "name": "Rafael Leão", "flag": "🇵🇹", "pos": "DEL", "ovr": 76, "rarity": "Rara", "spd": 36.5, "stats": {"VEL": 98, "REG": 74, "PAS": 64, "TIR": 76, "DEF": 44, "FIS": 67}, "country": "Portugal", "value": 2500000, "tier": "Crack", "trait": null}, {"id": "p71", "name": "Bukayo Saka", "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "pos": "DEL", "ovr": 76, "rarity": "Rara", "spd": 34.1, "stats": {"VEL": 84, "REG": 86, "PAS": 66, "TIR": 76, "DEF": 46, "FIS": 64}, "country": "Inglaterra", "value": 2500000, "tier": "Crack", "trait": null}, {"id": "p72", "name": "Trent Alexander-Arnold", "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "pos": "DEF", "ovr": 74, "rarity": "Rara", "spd": 31.9, "stats": {"VEL": 72, "REG": 59, "PAS": 74, "TIR": 46, "DEF": 79, "FIS": 76}, "country": "Inglaterra", "value": 1800000, "tier": "Titular", "trait": null}, {"id": "p73", "name": "Joshua Kimmich", "flag": "🇩🇪", "pos": "MED", "ovr": 72, "rarity": "Rara", "spd": 31.8, "stats": {"VEL": 71, "REG": 73, "PAS": 79, "TIR": 66, "DEF": 64, "FIS": 68}, "country": "Alemania", "value": 1400000, "tier": "Titular", "trait": null}, {"id": "p74", "name": "Frenkie de Jong", "flag": "🇳🇱", "pos": "MED", "ovr": 77, "rarity": "Rara", "spd": 33.4, "stats": {"VEL": 80, "REG": 82, "PAS": 81, "TIR": 66, "DEF": 68, "FIS": 72}, "country": "Países Bajos", "value": 3000000, "tier": "Crack", "trait": null}, {"id": "p75", "name": "Alessandro Nesta", "flag": "🇮🇹", "pos": "DEF", "ovr": 77, "rarity": "Rara", "spd": 31.8, "stats": {"VEL": 71, "REG": 57, "PAS": 62, "TIR": 44, "DEF": 88, "FIS": 84}, "country": "Italia", "value": 3000000, "tier": "Crack", "trait": null}, {"id": "p76", "name": "Raúl González", "flag": "🇪🇸", "pos": "DEL", "ovr": 74, "rarity": "Infrecuente", "spd": 34.1, "stats": {"VEL": 84, "REG": 70, "PAS": 62, "TIR": 83, "DEF": 40, "FIS": 64}, "country": "España", "value": 1800000, "tier": "Titular", "trait": null}, {"id": "p77", "name": "Fernando Torres", "flag": "🇪🇸", "pos": "DEL", "ovr": 70, "rarity": "Infrecuente", "spd": 35.5, "stats": {"VEL": 92, "REG": 69, "PAS": 54, "TIR": 70, "DEF": 37, "FIS": 59}, "country": "España", "value": 990000, "tier": "Titular", "trait": null}, {"id": "p78", "name": "David Villa", "flag": "🇪🇸", "pos": "DEL", "ovr": 73, "rarity": "Infrecuente", "spd": 33.4, "stats": {"VEL": 80, "REG": 70, "PAS": 58, "TIR": 82, "DEF": 39, "FIS": 62}, "country": "España", "value": 1600000, "tier": "Titular", "trait": null}, {"id": "p79", "name": "Xabi Alonso", "flag": "🇪🇸", "pos": "MED", "ovr": 66, "rarity": "Infrecuente", "spd": 31.3, "stats": {"VEL": 68, "REG": 66, "PAS": 76, "TIR": 52, "DEF": 56, "FIS": 59}, "country": "España", "value": 530000, "tier": "Titular", "trait": null}, {"id": "p80", "name": "Cesc Fàbregas", "flag": "🇪🇸", "pos": "MED", "ovr": 67, "rarity": "Infrecuente", "spd": 31, "stats": {"VEL": 67, "REG": 64, "PAS": 78, "TIR": 53, "DEF": 57, "FIS": 62}, "country": "España", "value": 620000, "tier": "Titular", "trait": null}, {"id": "p81", "name": "Gerard Piqué", "flag": "🇪🇸", "pos": "DEF", "ovr": 69, "rarity": "Infrecuente", "spd": 32.3, "stats": {"VEL": 74, "REG": 48, "PAS": 53, "TIR": 38, "DEF": 78, "FIS": 72}, "country": "España", "value": 840000, "tier": "Titular", "trait": null}, {"id": "p82", "name": "Jordi Alba", "flag": "🇪🇸", "pos": "DEF", "ovr": 67, "rarity": "Infrecuente", "spd": 35.7, "stats": {"VEL": 93, "REG": 51, "PAS": 52, "TIR": 38, "DEF": 69, "FIS": 67}, "country": "España", "value": 620000, "tier": "Titular", "trait": null}, {"id": "p83", "name": "Dani Carvajal", "flag": "🇪🇸", "pos": "DEF", "ovr": 68, "rarity": "Infrecuente", "spd": 32.8, "stats": {"VEL": 77, "REG": 52, "PAS": 54, "TIR": 42, "DEF": 74, "FIS": 72}, "country": "España", "value": 720000, "tier": "Titular", "trait": null}, {"id": "p84", "name": "Thomas Müller", "flag": "🇩🇪", "pos": "DEL", "ovr": 72, "rarity": "Infrecuente", "spd": 33, "stats": {"VEL": 78, "REG": 72, "PAS": 61, "TIR": 78, "DEF": 40, "FIS": 66}, "country": "Alemania", "value": 1400000, "tier": "Titular", "trait": null}, {"id": "p85", "name": "Miroslav Klose", "flag": "🇩🇪", "pos": "DEL", "ovr": 72, "rarity": "Infrecuente", "spd": 34.1, "stats": {"VEL": 84, "REG": 66, "PAS": 55, "TIR": 82, "DEF": 38, "FIS": 59}, "country": "Alemania", "value": 1400000, "tier": "Titular", "trait": null}, {"id": "p86", "name": "Bastian Schweinsteiger", "flag": "🇩🇪", "pos": "MED", "ovr": 69, "rarity": "Infrecuente", "spd": 32.7, "stats": {"VEL": 76, "REG": 66, "PAS": 74, "TIR": 57, "DEF": 62, "FIS": 72}, "country": "Alemania", "value": 840000, "tier": "Titular", "trait": null}, {"id": "p87", "name": "Mats Hummels", "flag": "🇩🇪", "pos": "DEF", "ovr": 73, "rarity": "Infrecuente", "spd": 31.7, "stats": {"VEL": 71, "REG": 54, "PAS": 59, "TIR": 42, "DEF": 83, "FIS": 79}, "country": "Alemania", "value": 1600000, "tier": "Titular", "trait": null}, {"id": "p88", "name": "Arjen Robben", "flag": "🇳🇱", "pos": "DEL", "ovr": 70, "rarity": "Infrecuente", "spd": 35.9, "stats": {"VEL": 94, "REG": 69, "PAS": 54, "TIR": 71, "DEF": 34, "FIS": 57}, "country": "Países Bajos", "value": 990000, "tier": "Titular", "trait": null}, {"id": "p89", "name": "Wesley Sneijder", "flag": "🇳🇱", "pos": "MED", "ovr": 66, "rarity": "Infrecuente", "spd": 31.3, "stats": {"VEL": 68, "REG": 65, "PAS": 76, "TIR": 53, "DEF": 54, "FIS": 61}, "country": "Países Bajos", "value": 530000, "tier": "Titular", "trait": null}, {"id": "p90", "name": "Robin van Persie", "flag": "🇳🇱", "pos": "DEL", "ovr": 71, "rarity": "Infrecuente", "spd": 33.7, "stats": {"VEL": 82, "REG": 68, "PAS": 57, "TIR": 78, "DEF": 38, "FIS": 56}, "country": "Países Bajos", "value": 1200000, "tier": "Titular", "trait": null}, {"id": "p91", "name": "Dennis Bergkamp", "flag": "🇳🇱", "pos": "DEL", "ovr": 70, "rarity": "Infrecuente", "spd": 32.1, "stats": {"VEL": 73, "REG": 72, "PAS": 68, "TIR": 73, "DEF": 40, "FIS": 63}, "country": "Países Bajos", "value": 990000, "tier": "Titular", "trait": null}, {"id": "p92", "name": "Ivan Rakitić", "flag": "🇭🇷", "pos": "MED", "ovr": 70, "rarity": "Infrecuente", "spd": 30.8, "stats": {"VEL": 66, "REG": 71, "PAS": 81, "TIR": 59, "DEF": 59, "FIS": 64}, "country": "Croacia", "value": 990000, "tier": "Titular", "trait": null}, {"id": "p93", "name": "Mario Mandžukić", "flag": "🇭🇷", "pos": "DEL", "ovr": 71, "rarity": "Infrecuente", "spd": 33.8, "stats": {"VEL": 82, "REG": 69, "PAS": 59, "TIR": 72, "DEF": 39, "FIS": 74}, "country": "Croacia", "value": 1200000, "tier": "Titular", "trait": null}, {"id": "p94", "name": "Radamel Falcao", "flag": "🇨🇴", "pos": "DEL", "ovr": 70, "rarity": "Infrecuente", "spd": 33.6, "stats": {"VEL": 81, "REG": 64, "PAS": 55, "TIR": 81, "DEF": 36, "FIS": 57}, "country": "Colombia", "value": 990000, "tier": "Titular", "trait": null}, {"id": "p95", "name": "James Rodríguez", "flag": "🇨🇴", "pos": "MED", "ovr": 68, "rarity": "Infrecuente", "spd": 31.7, "stats": {"VEL": 71, "REG": 65, "PAS": 80, "TIR": 56, "DEF": 54, "FIS": 62}, "country": "Colombia", "value": 720000, "tier": "Titular", "trait": null}, {"id": "p96", "name": "Luis Díaz", "flag": "🇨🇴", "pos": "DEL", "ovr": 74, "rarity": "Infrecuente", "spd": 36.1, "stats": {"VEL": 95, "REG": 72, "PAS": 62, "TIR": 76, "DEF": 39, "FIS": 62}, "country": "Colombia", "value": 1800000, "tier": "Titular", "trait": null}, {"id": "p97", "name": "Edinson Cavani", "flag": "🇺🇾", "pos": "DEL", "ovr": 74, "rarity": "Infrecuente", "spd": 33.6, "stats": {"VEL": 81, "REG": 70, "PAS": 62, "TIR": 84, "DEF": 38, "FIS": 60}, "country": "Uruguay", "value": 1800000, "tier": "Titular", "trait": null}, {"id": "p98", "name": "Diego Godín", "flag": "🇺🇾", "pos": "DEF", "ovr": 71, "rarity": "Infrecuente", "spd": 32.5, "stats": {"VEL": 75, "REG": 47, "PAS": 55, "TIR": 37, "DEF": 80, "FIS": 76}, "country": "Uruguay", "value": 1200000, "tier": "Titular", "trait": null}, {"id": "p99", "name": "Federico Valverde", "flag": "🇺🇾", "pos": "MED", "ovr": 66, "rarity": "Infrecuente", "spd": 36.3, "stats": {"VEL": 96, "REG": 64, "PAS": 67, "TIR": 56, "DEF": 54, "FIS": 69}, "country": "Uruguay", "value": 530000, "tier": "Titular", "trait": null}, {"id": "p100", "name": "Alexis Sánchez", "flag": "🇨🇱", "pos": "DEL", "ovr": 73, "rarity": "Infrecuente", "spd": 36, "stats": {"VEL": 95, "REG": 71, "PAS": 58, "TIR": 74, "DEF": 40, "FIS": 60}, "country": "Chile", "value": 1600000, "tier": "Titular", "trait": null}, {"id": "p101", "name": "Arturo Vidal", "flag": "🇨🇱", "pos": "MED", "ovr": 68, "rarity": "Infrecuente", "spd": 32.8, "stats": {"VEL": 77, "REG": 65, "PAS": 72, "TIR": 58, "DEF": 58, "FIS": 75}, "country": "Chile", "value": 720000, "tier": "Titular", "trait": null}, {"id": "p102", "name": "Gareth Bale", "flag": "🏴󠁧󠁢󠁷󠁬󠁳󠁿", "pos": "DEL", "ovr": 71, "rarity": "Infrecuente", "spd": 35.8, "stats": {"VEL": 94, "REG": 66, "PAS": 58, "TIR": 72, "DEF": 36, "FIS": 58}, "country": "Gales", "value": 1200000, "tier": "Titular", "trait": null}, {"id": "p103", "name": "Ryan Giggs", "flag": "🏴󠁧󠁢󠁷󠁬󠁳󠁿", "pos": "MED", "ovr": 69, "rarity": "Infrecuente", "spd": 33.1, "stats": {"VEL": 79, "REG": 78, "PAS": 71, "TIR": 59, "DEF": 59, "FIS": 63}, "country": "Gales", "value": 840000, "tier": "Titular", "trait": null}, {"id": "p104", "name": "Andriy Shevchenko", "flag": "🇺🇦", "pos": "DEL", "ovr": 71, "rarity": "Infrecuente", "spd": 33.2, "stats": {"VEL": 79, "REG": 68, "PAS": 58, "TIR": 80, "DEF": 34, "FIS": 56}, "country": "Ucrania", "value": 1200000, "tier": "Titular", "trait": null}, {"id": "p105", "name": "Hristo Stoichkov", "flag": "🇧🇬", "pos": "DEL", "ovr": 69, "rarity": "Infrecuente", "spd": 33.9, "stats": {"VEL": 83, "REG": 77, "PAS": 57, "TIR": 68, "DEF": 38, "FIS": 57}, "country": "Bulgaria", "value": 840000, "tier": "Titular", "trait": null}, {"id": "p106", "name": "Marcos Alonso", "flag": "🇪🇸", "pos": "DEF", "ovr": 59, "rarity": "Común", "spd": 32.3, "stats": {"VEL": 74, "REG": 43, "PAS": 46, "TIR": 32, "DEF": 62, "FIS": 61}, "country": "España", "value": 180000, "tier": "Reserva", "trait": null}, {"id": "p107", "name": "Nacho Fernández", "flag": "🇪🇸", "pos": "DEF", "ovr": 65, "rarity": "Común", "spd": 31.5, "stats": {"VEL": 70, "REG": 46, "PAS": 49, "TIR": 32, "DEF": 72, "FIS": 70}, "country": "España", "value": 450000, "tier": "Titular", "trait": null}, {"id": "p108", "name": "Iago Aspas", "flag": "🇪🇸", "pos": "DEL", "ovr": 65, "rarity": "Común", "spd": 34.6, "stats": {"VEL": 87, "REG": 70, "PAS": 48, "TIR": 63, "DEF": 30, "FIS": 48}, "country": "España", "value": 450000, "tier": "Titular", "trait": null}, {"id": "p109", "name": "Koke", "flag": "🇪🇸", "pos": "MED", "ovr": 63, "rarity": "Común", "spd": 31.4, "stats": {"VEL": 69, "REG": 62, "PAS": 72, "TIR": 51, "DEF": 52, "FIS": 58}, "country": "España", "value": 330000, "tier": "Reserva", "trait": null}, {"id": "p110", "name": "Isco", "flag": "🇪🇸", "pos": "MED", "ovr": 62, "rarity": "Común", "spd": 33.3, "stats": {"VEL": 80, "REG": 68, "PAS": 64, "TIR": 50, "DEF": 50, "FIS": 58}, "country": "España", "value": 280000, "tier": "Reserva", "trait": null}, {"id": "p111", "name": "Diego Costa", "flag": "🇪🇸", "pos": "DEL", "ovr": 61, "rarity": "Común", "spd": 33.6, "stats": {"VEL": 81, "REG": 59, "PAS": 46, "TIR": 60, "DEF": 30, "FIS": 58}, "country": "España", "value": 240000, "tier": "Reserva", "trait": null}, {"id": "p112", "name": "Pedro Rodríguez", "flag": "🇪🇸", "pos": "DEL", "ovr": 63, "rarity": "Común", "spd": 35.5, "stats": {"VEL": 92, "REG": 59, "PAS": 50, "TIR": 60, "DEF": 30, "FIS": 50}, "country": "España", "value": 330000, "tier": "Reserva", "trait": null}, {"id": "p113", "name": "Santi Cazorla", "flag": "🇪🇸", "pos": "MED", "ovr": 63, "rarity": "Común", "spd": 31.1, "stats": {"VEL": 67, "REG": 61, "PAS": 72, "TIR": 52, "DEF": 54, "FIS": 58}, "country": "España", "value": 330000, "tier": "Reserva", "trait": null}, {"id": "p114", "name": "Gonzalo Higuaín", "flag": "🇦🇷", "pos": "DEL", "ovr": 68, "rarity": "Común", "spd": 34.1, "stats": {"VEL": 84, "REG": 63, "PAS": 53, "TIR": 77, "DEF": 31, "FIS": 52}, "country": "Argentina", "value": 720000, "tier": "Titular", "trait": null}, {"id": "p115", "name": "Nicolás Otamendi", "flag": "🇦🇷", "pos": "DEF", "ovr": 63, "rarity": "Común", "spd": 32.3, "stats": {"VEL": 74, "REG": 38, "PAS": 46, "TIR": 30, "DEF": 71, "FIS": 66}, "country": "Argentina", "value": 330000, "tier": "Reserva", "trait": null}, {"id": "p116", "name": "Javier Mascherano", "flag": "🇦🇷", "pos": "MED", "ovr": 62, "rarity": "Común", "spd": 31.5, "stats": {"VEL": 70, "REG": 58, "PAS": 66, "TIR": 50, "DEF": 59, "FIS": 62}, "country": "Argentina", "value": 280000, "tier": "Reserva", "trait": null}, {"id": "p117", "name": "Éver Banega", "flag": "🇦🇷", "pos": "MED", "ovr": 62, "rarity": "Común", "spd": 31, "stats": {"VEL": 67, "REG": 60, "PAS": 72, "TIR": 50, "DEF": 50, "FIS": 55}, "country": "Argentina", "value": 280000, "tier": "Reserva", "trait": null}, {"id": "p118", "name": "Casemiro", "flag": "🇧🇷", "pos": "MED", "ovr": 59, "rarity": "Común", "spd": 32.1, "stats": {"VEL": 73, "REG": 55, "PAS": 62, "TIR": 47, "DEF": 56, "FIS": 56}, "country": "Brasil", "value": 180000, "tier": "Reserva", "trait": null}, {"id": "p119", "name": "Fernandinho", "flag": "🇧🇷", "pos": "MED", "ovr": 62, "rarity": "Común", "spd": 31.7, "stats": {"VEL": 71, "REG": 60, "PAS": 68, "TIR": 53, "DEF": 53, "FIS": 58}, "country": "Brasil", "value": 280000, "tier": "Reserva", "trait": null}, {"id": "p120", "name": "David Luiz", "flag": "🇧🇷", "pos": "DEF", "ovr": 60, "rarity": "Común", "spd": 32.6, "stats": {"VEL": 76, "REG": 44, "PAS": 49, "TIR": 32, "DEF": 64, "FIS": 61}, "country": "Brasil", "value": 210000, "tier": "Reserva", "trait": null}, {"id": "p121", "name": "Roberto Firmino", "flag": "🇧🇷", "pos": "DEL", "ovr": 61, "rarity": "Común", "spd": 32.9, "stats": {"VEL": 77, "REG": 63, "PAS": 56, "TIR": 60, "DEF": 30, "FIS": 50}, "country": "Brasil", "value": 240000, "tier": "Reserva", "trait": null}, {"id": "p122", "name": "Gabriel Jesus", "flag": "🇧🇷", "pos": "DEL", "ovr": 67, "rarity": "Común", "spd": 35.5, "stats": {"VEL": 92, "REG": 62, "PAS": 53, "TIR": 68, "DEF": 31, "FIS": 54}, "country": "Brasil", "value": 620000, "tier": "Titular", "trait": null}, {"id": "p123", "name": "Willian", "flag": "🇧🇷", "pos": "MED", "ovr": 58, "rarity": "Común", "spd": 32.6, "stats": {"VEL": 76, "REG": 66, "PAS": 58, "TIR": 48, "DEF": 46, "FIS": 52}, "country": "Brasil", "value": 150000, "tier": "Reserva", "trait": null}, {"id": "p124", "name": "Olivier Giroud", "flag": "🇫🇷", "pos": "DEL", "ovr": 61, "rarity": "Común", "spd": 33.1, "stats": {"VEL": 79, "REG": 59, "PAS": 49, "TIR": 60, "DEF": 30, "FIS": 60}, "country": "Francia", "value": 240000, "tier": "Reserva", "trait": null}, {"id": "p125", "name": "Paul Pogba", "flag": "🇫🇷", "pos": "MED", "ovr": 61, "rarity": "Común", "spd": 32, "stats": {"VEL": 72, "REG": 57, "PAS": 64, "TIR": 52, "DEF": 53, "FIS": 68}, "country": "Francia", "value": 240000, "tier": "Reserva", "trait": null}, {"id": "p126", "name": "Raphaël Varane", "flag": "🇫🇷", "pos": "DEF", "ovr": 66, "rarity": "Común", "spd": 32.5, "stats": {"VEL": 75, "REG": 44, "PAS": 48, "TIR": 32, "DEF": 74, "FIS": 70}, "country": "Francia", "value": 530000, "tier": "Titular", "trait": null}, {"id": "p127", "name": "Leonardo Bonucci", "flag": "🇮🇹", "pos": "DEF", "ovr": 63, "rarity": "Común", "spd": 32.4, "stats": {"VEL": 75, "REG": 41, "PAS": 44, "TIR": 31, "DEF": 69, "FIS": 68}, "country": "Italia", "value": 330000, "tier": "Reserva", "trait": null}, {"id": "p128", "name": "Marco Verratti", "flag": "🇮🇹", "pos": "MED", "ovr": 59, "rarity": "Común", "spd": 31, "stats": {"VEL": 67, "REG": 59, "PAS": 68, "TIR": 47, "DEF": 47, "FIS": 53}, "country": "Italia", "value": 180000, "tier": "Reserva", "trait": null}, {"id": "p129", "name": "Ciro Immobile", "flag": "🇮🇹", "pos": "DEL", "ovr": 65, "rarity": "Común", "spd": 33.3, "stats": {"VEL": 80, "REG": 60, "PAS": 49, "TIR": 74, "DEF": 30, "FIS": 51}, "country": "Italia", "value": 450000, "tier": "Titular", "trait": null}, {"id": "p130", "name": "Gennaro Gattuso", "flag": "🇮🇹", "pos": "MED", "ovr": 57, "rarity": "Común", "spd": 32.7, "stats": {"VEL": 76, "REG": 55, "PAS": 61, "TIR": 45, "DEF": 46, "FIS": 61}, "country": "Italia", "value": 130000, "tier": "Reserva", "trait": null}, {"id": "p131", "name": "Pepe", "flag": "🇵🇹", "pos": "DEF", "ovr": 64, "rarity": "Común", "spd": 32.8, "stats": {"VEL": 77, "REG": 45, "PAS": 48, "TIR": 33, "DEF": 66, "FIS": 76}, "country": "Portugal", "value": 380000, "tier": "Reserva", "trait": null}, {"id": "p132", "name": "João Moutinho", "flag": "🇵🇹", "pos": "MED", "ovr": 60, "rarity": "Común", "spd": 31.5, "stats": {"VEL": 70, "REG": 58, "PAS": 68, "TIR": 45, "DEF": 50, "FIS": 52}, "country": "Portugal", "value": 210000, "tier": "Reserva", "trait": null}, {"id": "p133", "name": "Hirving Lozano", "flag": "🇲🇽", "pos": "DEL", "ovr": 66, "rarity": "Común", "spd": 36.1, "stats": {"VEL": 95, "REG": 63, "PAS": 50, "TIR": 64, "DEF": 32, "FIS": 56}, "country": "México", "value": 530000, "tier": "Titular", "trait": null}, {"id": "p134", "name": "Hugo Sánchez", "flag": "🇲🇽", "pos": "DEL", "ovr": 66, "rarity": "Común", "spd": 33.1, "stats": {"VEL": 79, "REG": 60, "PAS": 50, "TIR": 76, "DEF": 33, "FIS": 54}, "country": "México", "value": 530000, "tier": "Titular", "trait": null}, {"id": "p135", "name": "Christian Pulisic", "flag": "🇺🇸", "pos": "DEL", "ovr": 68, "rarity": "Común", "spd": 35.9, "stats": {"VEL": 94, "REG": 62, "PAS": 52, "TIR": 68, "DEF": 34, "FIS": 56}, "country": "Estados Unidos", "value": 720000, "tier": "Titular", "trait": null}, {"id": "p136", "name": "Alphonso Davies", "flag": "🇨🇦", "pos": "DEF", "ovr": 63, "rarity": "Común", "spd": 36.5, "stats": {"VEL": 98, "REG": 42, "PAS": 47, "TIR": 30, "DEF": 62, "FIS": 62}, "country": "Canadá", "value": 330000, "tier": "Reserva", "trait": null}, {"id": "p137", "name": "Kaoru Mitoma", "flag": "🇯🇵", "pos": "DEL", "ovr": 67, "rarity": "Común", "spd": 34.3, "stats": {"VEL": 85, "REG": 71, "PAS": 53, "TIR": 68, "DEF": 34, "FIS": 53}, "country": "Japón", "value": 620000, "tier": "Titular", "trait": null}, {"id": "p138", "name": "Kim Min-jae", "flag": "🇰🇷", "pos": "DEF", "ovr": 63, "rarity": "Común", "spd": 32.5, "stats": {"VEL": 75, "REG": 41, "PAS": 47, "TIR": 30, "DEF": 70, "FIS": 66}, "country": "Corea del Sur", "value": 330000, "tier": "Reserva", "trait": null}, {"id": "p139", "name": "Riyad Mahrez", "flag": "🇩🇿", "pos": "DEL", "ovr": 64, "rarity": "Común", "spd": 34.4, "stats": {"VEL": 86, "REG": 69, "PAS": 50, "TIR": 62, "DEF": 30, "FIS": 51}, "country": "Argelia", "value": 380000, "tier": "Reserva", "trait": null}, {"id": "p140", "name": "Hakim Ziyech", "flag": "🇲🇦", "pos": "MED", "ovr": 59, "rarity": "Común", "spd": 31.3, "stats": {"VEL": 68, "REG": 56, "PAS": 70, "TIR": 44, "DEF": 47, "FIS": 54}, "country": "Marruecos", "value": 180000, "tier": "Reserva", "trait": null}, {"id": "p141", "name": "Yaya Touré", "flag": "🇨🇮", "pos": "MED", "ovr": 57, "rarity": "Común", "spd": 31.9, "stats": {"VEL": 72, "REG": 55, "PAS": 60, "TIR": 44, "DEF": 49, "FIS": 62}, "country": "Costa de Marfil", "value": 130000, "tier": "Reserva", "trait": null}, {"id": "p142", "name": "Victor Osimhen", "flag": "🇳🇬", "pos": "DEL", "ovr": 66, "rarity": "Común", "spd": 35.8, "stats": {"VEL": 94, "REG": 64, "PAS": 51, "TIR": 65, "DEF": 31, "FIS": 52}, "country": "Nigeria", "value": 530000, "tier": "Titular", "trait": null}, {"id": "p143", "name": "Ali Daei", "flag": "🇮🇷", "pos": "DEL", "ovr": 67, "rarity": "Común", "spd": 33.7, "stats": {"VEL": 82, "REG": 60, "PAS": 54, "TIR": 75, "DEF": 30, "FIS": 54}, "country": "Irán", "value": 620000, "tier": "Titular", "trait": null}, {"id": "p144", "name": "Tim Cahill", "flag": "🇦🇺", "pos": "DEL", "ovr": 65, "rarity": "Común", "spd": 33.5, "stats": {"VEL": 81, "REG": 62, "PAS": 50, "TIR": 68, "DEF": 31, "FIS": 65}, "country": "Australia", "value": 450000, "tier": "Titular", "trait": null}, {"id": "g0", "name": "Gianluigi Buffon", "flag": "🇮🇹", "pos": "POR", "ovr": 88, "rarity": "Legendaria", "spd": 29.3, "stats": {"VEL": 57, "REG": 45, "PAS": 55, "TIR": 30, "DEF": 50, "FIS": 60, "POR": 88}, "country": "Italia", "value": 16500000, "tier": "Leyenda", "trait": null}, {"id": "g1", "name": "Lev Yashin", "flag": "🚩", "pos": "POR", "ovr": 89, "rarity": "Legendaria", "spd": 29.7, "stats": {"VEL": 60, "REG": 45, "PAS": 55, "TIR": 30, "DEF": 50, "FIS": 60, "POR": 89}, "country": "Unión Soviética", "value": 19500000, "tier": "Leyenda", "trait": null}, {"id": "g2", "name": "Iker Casillas", "flag": "🇪🇸", "pos": "POR", "ovr": 84, "rarity": "Épica", "spd": 30, "stats": {"VEL": 61, "REG": 45, "PAS": 55, "TIR": 30, "DEF": 50, "FIS": 60, "POR": 84}, "country": "España", "value": 8900000, "tier": "Crack", "trait": null}, {"id": "g3", "name": "Manuel Neuer", "flag": "🇩🇪", "pos": "POR", "ovr": 83, "rarity": "Épica", "spd": 29.6, "stats": {"VEL": 59, "REG": 45, "PAS": 55, "TIR": 30, "DEF": 50, "FIS": 60, "POR": 83}, "country": "Alemania", "value": 7600000, "tier": "Crack", "trait": null}, {"id": "g4", "name": "Thibaut Courtois", "flag": "🇧🇪", "pos": "POR", "ovr": 83, "rarity": "Épica", "spd": 29.7, "stats": {"VEL": 60, "REG": 45, "PAS": 55, "TIR": 30, "DEF": 50, "FIS": 60, "POR": 83}, "country": "Bélgica", "value": 7600000, "tier": "Crack", "trait": null}, {"id": "g5", "name": "Alisson Becker", "flag": "🇧🇷", "pos": "POR", "ovr": 82, "rarity": "Épica", "spd": 29.7, "stats": {"VEL": 60, "REG": 45, "PAS": 55, "TIR": 30, "DEF": 50, "FIS": 60, "POR": 82}, "country": "Brasil", "value": 6500000, "tier": "Crack", "trait": null}, {"id": "g6", "name": "Oliver Kahn", "flag": "🇩🇪", "pos": "POR", "ovr": 81, "rarity": "Épica", "spd": 29.3, "stats": {"VEL": 57, "REG": 45, "PAS": 55, "TIR": 30, "DEF": 50, "FIS": 60, "POR": 81}, "country": "Alemania", "value": 5600000, "tier": "Crack", "trait": null}, {"id": "g7", "name": "Jan Oblak", "flag": "🇸🇮", "pos": "POR", "ovr": 75, "rarity": "Rara", "spd": 29.3, "stats": {"VEL": 57, "REG": 45, "PAS": 55, "TIR": 30, "DEF": 50, "FIS": 60, "POR": 75}, "country": "Eslovenia", "value": 2200000, "tier": "Crack", "trait": null}, {"id": "g8", "name": "Marc-André ter Stegen", "flag": "🇩🇪", "pos": "POR", "ovr": 73, "rarity": "Rara", "spd": 29.3, "stats": {"VEL": 57, "REG": 45, "PAS": 55, "TIR": 30, "DEF": 50, "FIS": 60, "POR": 73}, "country": "Alemania", "value": 1600000, "tier": "Titular", "trait": null}, {"id": "g9", "name": "Gianluigi Donnarumma", "flag": "🇮🇹", "pos": "POR", "ovr": 76, "rarity": "Rara", "spd": 29.9, "stats": {"VEL": 61, "REG": 45, "PAS": 55, "TIR": 30, "DEF": 50, "FIS": 60, "POR": 76}, "country": "Italia", "value": 2500000, "tier": "Crack", "trait": null}, {"id": "g10", "name": "Ederson", "flag": "🇧🇷", "pos": "POR", "ovr": 75, "rarity": "Rara", "spd": 29.4, "stats": {"VEL": 58, "REG": 45, "PAS": 55, "TIR": 30, "DEF": 50, "FIS": 60, "POR": 75}, "country": "Brasil", "value": 2200000, "tier": "Crack", "trait": null}, {"id": "g11", "name": "Mike Maignan", "flag": "🇫🇷", "pos": "POR", "ovr": 74, "rarity": "Rara", "spd": 29.2, "stats": {"VEL": 57, "REG": 45, "PAS": 55, "TIR": 30, "DEF": 50, "FIS": 60, "POR": 74}, "country": "Francia", "value": 1800000, "tier": "Titular", "trait": null}, {"id": "g12", "name": "Peter Schmeichel", "flag": "🇩🇰", "pos": "POR", "ovr": 73, "rarity": "Rara", "spd": 29.3, "stats": {"VEL": 57, "REG": 45, "PAS": 55, "TIR": 30, "DEF": 50, "FIS": 60, "POR": 73}, "country": "Dinamarca", "value": 1600000, "tier": "Titular", "trait": null}, {"id": "g13", "name": "Emiliano Martínez", "flag": "🇦🇷", "pos": "POR", "ovr": 74, "rarity": "Rara", "spd": 29.3, "stats": {"VEL": 57, "REG": 45, "PAS": 55, "TIR": 30, "DEF": 50, "FIS": 60, "POR": 74}, "country": "Argentina", "value": 1800000, "tier": "Titular", "trait": null}, {"id": "g14", "name": "Edwin van der Sar", "flag": "🇳🇱", "pos": "POR", "ovr": 66, "rarity": "Infrecuente", "spd": 29.3, "stats": {"VEL": 57, "REG": 45, "PAS": 55, "TIR": 30, "DEF": 50, "FIS": 60, "POR": 66}, "country": "Países Bajos", "value": 530000, "tier": "Titular", "trait": null}, {"id": "g15", "name": "David de Gea", "flag": "🇪🇸", "pos": "POR", "ovr": 68, "rarity": "Infrecuente", "spd": 29.5, "stats": {"VEL": 58, "REG": 45, "PAS": 55, "TIR": 30, "DEF": 50, "FIS": 60, "POR": 68}, "country": "España", "value": 720000, "tier": "Titular", "trait": null}, {"id": "g16", "name": "Hugo Lloris", "flag": "🇫🇷", "pos": "POR", "ovr": 68, "rarity": "Infrecuente", "spd": 29.7, "stats": {"VEL": 60, "REG": 45, "PAS": 55, "TIR": 30, "DEF": 50, "FIS": 60, "POR": 68}, "country": "Francia", "value": 720000, "tier": "Titular", "trait": null}, {"id": "g17", "name": "Keylor Navas", "flag": "🇨🇷", "pos": "POR", "ovr": 69, "rarity": "Infrecuente", "spd": 30, "stats": {"VEL": 61, "REG": 45, "PAS": 55, "TIR": 30, "DEF": 50, "FIS": 60, "POR": 69}, "country": "Costa Rica", "value": 840000, "tier": "Titular", "trait": null}, {"id": "g18", "name": "Yassine Bounou", "flag": "🇲🇦", "pos": "POR", "ovr": 70, "rarity": "Infrecuente", "spd": 29.5, "stats": {"VEL": 58, "REG": 45, "PAS": 55, "TIR": 30, "DEF": 50, "FIS": 60, "POR": 70}, "country": "Marruecos", "value": 990000, "tier": "Titular", "trait": null}, {"id": "g19", "name": "Unai Simón", "flag": "🇪🇸", "pos": "POR", "ovr": 58, "rarity": "Común", "spd": 29, "stats": {"VEL": 56, "REG": 45, "PAS": 55, "TIR": 30, "DEF": 50, "FIS": 60, "POR": 58}, "country": "España", "value": 150000, "tier": "Reserva", "trait": null}, {"id": "g20", "name": "Pepe Reina", "flag": "🇪🇸", "pos": "POR", "ovr": 59, "rarity": "Común", "spd": 29.4, "stats": {"VEL": 58, "REG": 45, "PAS": 55, "TIR": 30, "DEF": 50, "FIS": 60, "POR": 59}, "country": "España", "value": 180000, "tier": "Reserva", "trait": null}, {"id": "g21", "name": "Víctor Valdés", "flag": "🇪🇸", "pos": "POR", "ovr": 61, "rarity": "Común", "spd": 29.1, "stats": {"VEL": 56, "REG": 45, "PAS": 55, "TIR": 30, "DEF": 50, "FIS": 60, "POR": 61}, "country": "España", "value": 240000, "tier": "Reserva", "trait": null}, {"id": "g22", "name": "Kasper Schmeichel", "flag": "🇩🇰", "pos": "POR", "ovr": 59, "rarity": "Común", "spd": 29.2, "stats": {"VEL": 57, "REG": 45, "PAS": 55, "TIR": 30, "DEF": 50, "FIS": 60, "POR": 59}, "country": "Dinamarca", "value": 180000, "tier": "Reserva", "trait": null}];
+const SPECIALS = [{"id": "pase_magistral", "name": "Pase Magistral", "text": "Tu pase no puede ser interceptado por posición o corte.", "short": "Tu pase no puede ser interceptado por posición o corte.", "sup": false, "roles": ["atk"], "emoji": "🎯"}, {"id": "amarilla", "name": "Tarjeta amarilla", "text": "Cuando el rival te hace una falta, se la puedes sacar al infractor: queda amonestado (−1 en sus entradas, persecuciones y faltas) y con una segunda amarilla, a la calle.", "short": "Amonesta al que te hace falta", "sup": false, "roles": [], "emoji": "🟨"}, {"id": "roja", "name": "Tarjeta roja", "text": "Ante una falta GRAVE del rival (entrada muy temeraria, en el área o cortando una ocasión clara), expulsas al infractor: su equipo juega con uno menos. Al portero no se le puede expulsar.", "short": "Expulsa al que te hace falta grave", "sup": false, "roles": [], "emoji": "🟥"}, {"id": "pausa", "name": "La Pausa", "text": "Con el balón en tus pies y antes de declarar, obligas a la defensa rival a declarar primero (enseña su jugada y su carta). Después decides tú.", "short": "La defensa declara primero", "sup": false, "roles": ["atk"], "emoji": "⏸️"}, {"id": "aficion", "name": "Afición", "text": "+3 a tu acción.", "short": "+3 a tu acción.", "sup": false, "roles": ["atk", "def"], "emoji": "📣"}, {"id": "cansancio", "name": "Cansancio", "text": "−3 a la acción del rival.", "short": "−3 a la acción del rival.", "sup": false, "roles": ["atk", "def"], "emoji": "😮‍💨"}, {"id": "lesion", "name": "Lesión Leve", "text": "El rival descarta una carta al azar.", "short": "El rival descarta una carta al azar.", "sup": false, "roles": ["atk", "def"], "emoji": "🩹"}, {"id": "entrada_perfecta", "name": "Entrada Perfecta", "text": "+4 a tu entrada y ganas los empates.", "short": "+4 a tu entrada y ganas los empates.", "sup": false, "roles": ["def"], "emoji": "🦵"}, {"id": "contraataque", "name": "Contraataque", "text": "Si recuperas el balón, sales corriendo 14 metros.", "short": "Si recuperas el balón, sales corriendo 14 metros.", "sup": false, "roles": ["def"], "emoji": "⚡"}, {"id": "var", "name": "VAR", "text": "Anula un gol rival (solo se gasta si hay gol).", "short": "Anula un gol rival (solo se gasta si hay gol).", "sup": false, "roles": ["def"], "emoji": "📺"}, {"id": "trebol", "name": "Trébol", "text": "Tiras la suerte dos veces y te quedas con la mejor.", "short": "Tiras la suerte dos veces y te quedas con la mejor.", "sup": false, "roles": ["atk", "def"], "emoji": "🍀"}, {"id": "gafe", "name": "Gafe", "text": "El rival tira la suerte dos veces y se queda con la peor.", "short": "El rival tira la suerte dos veces y se queda con la peor.", "sup": false, "roles": ["atk", "def"], "emoji": "🤞"}, {"id": "moneda", "name": "Cara o Cruz", "text": "El duelo se decide a cara o cruz, sin mirar los valores.", "short": "El duelo se decide a cara o cruz, sin mirar los valores.", "sup": false, "roles": ["atk", "def"], "emoji": "🪙"}, {"id": "misil", "name": "Misil", "text": "Chutazo imparable: sin penalización por distancia ni riesgo de irse fuera, y +3. Golazos desde lejos.", "short": "Golazo desde lejos: sin penalización ni tiro fuera, +2", "sup": true, "roles": ["atk"], "emoji": "🚀"}, {"id": "paradon", "name": "Paradón", "text": "Tu portero suma +6, gana los empates, atrapa el balón (sin rechace) y la carta de Disparo del rival no cuenta. Solo se gasta si el rival chuta.", "short": "Portero +6 y anula la carta de Disparo rival", "sup": true, "roles": ["def"], "emoji": "🧤"}, {"id": "turbo", "name": "Súper velocidad", "text": "Tu futbolista corre un 40 % más rápido en esta jugada: llega antes al balón suelto, recorre más y le cuesta más que le alcancen.", "short": "Tu futbolista corre un 40 % más rápido", "sup": true, "roles": ["atk", "def"], "emoji": "💨"}, {"id": "elastica", "name": "La Elástica", "text": "Regate imposible: +6 y ganas los empates.", "short": "Regate imposible: +6 y gana empates", "sup": true, "roles": ["atk"], "emoji": "🕺"}];
+
+const FORMATIONS = {
+  "4-4-2": {style:"Equilibrado", pos:["POR","LI","DFC","DFC","LD","MI","MC","MC","MD","DC","DC"], coords:[
+    [50,92],[14,75],[33,75],[67,75],[86,75],[14,55],[35,55],[65,55],[86,55],[35,30],[65,30]]},
+  "4-3-3": {style:"Ataque", pos:["POR","LI","DFC","DFC","LD","MC","MC","MC","EI","DC","ED"], coords:[
+    [50,92],[14,75],[33,75],[67,75],[86,75],[25,52],[50,52],[75,52],[20,25],[50,22],[80,25]]},
+  "4-2-3-1": {style:"Control", pos:["POR","LI","DFC","DFC","LD","MCD","MCD","MI","MC","MD","DC"], coords:[
+    [50,92],[14,75],[33,75],[67,75],[86,75],[35,62],[65,62],[20,42],[50,40],[80,42],[50,22]]},
+  "3-5-2": {style:"Dominio centro", pos:["POR","DFC","DFC","DFC","CI","MC","MC","MC","CD","DC","DC"], coords:[
+    [50,92],[25,78],[50,78],[75,78],[14,55],[33,52],[50,50],[67,52],[86,55],[35,28],[65,28]]},
+  "5-3-2": {style:"Defensivo", pos:["POR","CI","LI","DFC","LD","CD","MC","MC","MC","DC","DC"], coords:[
+    [50,92],[14,75],[28,78],[50,80],[72,78],[86,75],[25,55],[50,52],[75,55],[38,28],[62,28]]},
+  "3-4-3": {style:"Ultra ofensivo", pos:["POR","DFC","DFC","DFC","CI","MC","MC","CD","EI","DC","ED"], coords:[
+    [50,92],[25,78],[50,78],[75,78],[14,55],[37,52],[63,52],[86,55],[18,24],[50,20],[82,24]]}
+};
+
+const RARITY_COLOR = {
+  "Legendaria":"var(--r-L)","Épica":"var(--r-E)","Rara":"var(--r-R)",
+  "Infrecuente":"var(--r-I)","Común":"var(--r-C)"
+};
+const RARITY_KEY = {
+  "Legendaria":"L","Épica":"E","Rara":"R","Infrecuente":"I","Común":"C"
+};
+
+// ═══════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(b => b.classList.remove('on'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
+    btn.classList.add('on');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('on');
+  });
+});
+
+// ═══════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════
+function fmtVal(v) {
+  if (v >= 1e6) return (v/1e6).toFixed(1) + 'M';
+  if (v >= 1e3) return (v/1e3).toFixed(0) + 'K';
+  return v;
+}
+
+function rarityStyle(r) {
+  const c = RARITY_COLOR[r] || 'var(--muted)';
+  const k = RARITY_KEY[r] || 'C';
+  return `rarity-${k}`;
+}
+
+function ovrPct(o) { return Math.round((o - 60) / 35 * 100); }
+
+function statBarHTML(stats, rc) {
+  return Object.entries(stats).map(([k,v]) =>
+    `<div class="stat-row">
+      <div class="stat-label">${k}</div>
+      <div class="stat-bar"><div class="stat-fill" style="width:${v}%;background:${rc}"></div></div>
+      <div class="stat-val">${v}</div>
+    </div>`
+  ).join('');
+}
+
+function playerCardHTML(p, compact=false) {
+  const rc = RARITY_COLOR[p.rarity] || 'var(--muted)';
+  const pct = ovrPct(p.ovr);
+  const rk = RARITY_KEY[p.rarity] || 'C';
+  const stats = compact ? '' : `<div style="margin-top:.5rem">${statBarHTML(p.stats, rc)}</div>`;
+  return `
+    <div class="pcard rarity-${rk}">
+      <div class="pcard-top">
+        <div class="ovr-ring" style="--pct:${pct};--rc:${rc}">
+          <span class="ovr-num">${p.ovr}</span>
+        </div>
+        <div class="pcard-info">
+          <div class="pcard-name" title="${p.name}">${p.flag} ${p.name}</div>
+          <div class="pcard-meta">
+            <span class="pos-pill">${p.pos}</span>
+            <span class="rarity-badge rarity-${rk}" style="--rc:${rc}">${p.rarity}</span>
+          </div>
+          ${compact ? '' : `<div style="font-size:.65rem;color:var(--muted);margin-top:.2rem">🏃 ${p.spd} km/h · 💰 ${fmtVal(p.value)}</div>`}
+        </div>
+      </div>
+      ${stats}
+    </div>`;
+}
+
+// ═══════════════════════════════════════════
+// ROSTER
+// ═══════════════════════════════════════════
+let rosterFiltered = [...PLAYERS];
+
+function filterRoster() {
+  const q = document.getElementById('search-player').value.toLowerCase();
+  const pos = document.getElementById('filter-pos').value;
+  const rarity = document.getElementById('filter-rarity').value;
+  const sort = document.getElementById('sort-players').value;
+
+  rosterFiltered = PLAYERS.filter(p =>
+    (!q || p.name.toLowerCase().includes(q) || p.country.toLowerCase().includes(q)) &&
+    (!pos || p.pos === pos) &&
+    (!rarity || p.rarity === rarity)
+  );
+
+  if (sort === 'ovr') rosterFiltered.sort((a,b) => b.ovr - a.ovr);
+  else if (sort === 'spd') rosterFiltered.sort((a,b) => b.spd - a.spd);
+  else if (sort === 'name') rosterFiltered.sort((a,b) => a.name.localeCompare(b.name));
+  else if (sort === 'value') rosterFiltered.sort((a,b) => b.value - a.value);
+
+  renderRoster();
+}
+
+function renderRoster() {
+  const grid = document.getElementById('roster-grid');
+  grid.innerHTML = rosterFiltered.map(p => `
+    <div class="card" onclick="showPlayerModal('${p.id}')" style="cursor:pointer">
+      ${playerCardHTML(p)}
+    </div>`).join('');
+  document.getElementById('roster-footer').textContent =
+    `Mostrando ${rosterFiltered.length} de ${PLAYERS.length} jugadores`;
+  document.getElementById('roster-count').textContent = `${rosterFiltered.length} jugadores`;
+}
+
+renderRoster();
+
+// ═══════════════════════════════════════════
+// MATCH SELECT POPULATOR
+// ═══════════════════════════════════════════
+function populateMatchSelects() {
+  const sorted = [...PLAYERS].sort((a,b) => b.ovr - a.ovr);
+  const opts = sorted.map(p => `<option value="${p.id}">${p.flag} ${p.name} (${p.ovr}) · ${p.pos}</option>`).join('');
+  document.getElementById('match-p1').innerHTML = '<option value="">— Selecciona —</option>' + opts;
+  document.getElementById('match-p2').innerHTML = '<option value="">— Selecciona —</option>' + opts;
+}
+populateMatchSelects();
+
+// ═══════════════════════════════════════════
+// MATCH ENGINE
+// ═══════════════════════════════════════════
+let matchState = { a:0, b:0, log:[] };
+let selectedP1 = null, selectedP2 = null;
+
+function pickPlayer(side, id) {
+  const p = PLAYERS.find(x => x.id === id);
+  if (!id || !p) return;
+  if (side === 'p1') {
+    selectedP1 = p;
+    document.getElementById('p1-card').style.display = 'block';
+    document.getElementById('p1-card').innerHTML = playerCardHTML(p);
+  } else {
+    selectedP2 = p;
+    document.getElementById('p2-card').style.display = 'block';
+    document.getElementById('p2-card').innerHTML = playerCardHTML(p);
+  }
+}
+
+function simMatch() {
+  if (!selectedP1 || !selectedP2) {
+    if (!selectedP1) {
+      selectedP1 = PLAYERS[Math.floor(Math.random()*PLAYERS.length)];
+      document.getElementById('match-p1').value = selectedP1.id;
+      pickPlayer('p1', selectedP1.id);
+    }
+    if (!selectedP2) {
+      selectedP2 = PLAYERS[Math.floor(Math.random()*PLAYERS.length)];
+      document.getElementById('match-p2').value = selectedP2.id;
+      pickPlayer('p2', selectedP2.id);
+    }
+  }
+  const result = runMatch(selectedP1, selectedP2);
+  matchState.a += result.goalsA;
+  matchState.b += result.goalsB;
+  document.getElementById('score-a').textContent = matchState.a;
+  document.getElementById('score-b').textContent = matchState.b;
+  matchState.log.unshift(...result.log.reverse());
+  matchState.log = matchState.log.slice(0, 50);
+  renderLog();
+  document.getElementById('match-result').textContent =
+    result.goalsA > result.goalsB ? `✅ Gana ${selectedP1.flag} ${selectedP1.name}` :
+    result.goalsA < result.goalsB ? `✅ Gana ${selectedP2.flag} ${selectedP2.name}` :
+    '🤝 Empate';
+}
+
+function simN(n) {
+  for (let i=0; i<n; i++) simMatch();
+}
+
+function resetMatch() {
+  matchState = {a:0,b:0,log:[]};
+  document.getElementById('score-a').textContent = '0';
+  document.getElementById('score-b').textContent = '0';
+  document.getElementById('match-result').textContent = '';
+  document.getElementById('match-log').innerHTML = '<div class="log-entry" style="color:var(--muted)">Selecciona dos jugadores y pulsa Simular ⚽</div>';
+}
+
+function runMatch(p1, p2) {
+  const mins = [15,25,35,55,65,75,85].filter(() => Math.random() < 0.5);
+  let gA=0, gB=0;
+  const log = [];
+  const scoreP = (p) => (p.stats.TIR + p.stats.REG + p.ovr + Math.random()*40) / 3;
+  const defP = (p) => (p.stats.DEF + p.stats.FIS + p.ovr + Math.random()*20) / 2.5;
+
+  for (const min of mins) {
+    const aScore = scoreP(p1), bScore = defP(p2);
+    const bScore2 = scoreP(p2), aScore2 = defP(p1);
+    if (aScore > bScore + 5) {
+      gA++;
+      log.push({ min, type:'goal', text:`⚽ min ${min}' — GOL de ${p1.flag} ${p1.name}!`, cls:'log-goal'});
+    } else if (bScore2 > aScore2 + 5) {
+      gB++;
+      log.push({ min, type:'goal', text:`⚽ min ${min}' — GOL de ${p2.flag} ${p2.name}!`, cls:'log-goal'});
+    } else {
+      const events = ['Disparo fuera','Parada del portero','Falta','Córner','Fuera de juego','Remate al palo'];
+      log.push({ min, type:'event', text:`min ${min}' — ${events[Math.floor(Math.random()*events.length)]}`, cls:''});
+    }
+  }
+  if (mins.length === 0) log.push({min:90,type:'event',text:'90\'— Partido cerrado, 0-0',cls:''});
+  return {goalsA:gA, goalsB:gB, log};
+}
+
+function renderLog() {
+  const el = document.getElementById('match-log');
+  el.innerHTML = matchState.log.map(e =>
+    `<div class="log-entry ${e.cls}">${e.text}</div>`
+  ).join('');
+  el.scrollTop = 0;
+}
+
+// Quick specials
+function renderSpecialQuick() {
+  const wrap = document.getElementById('special-quick');
+  wrap.innerHTML = SPECIALS.slice(0,8).map(s =>
+    `<button class="btn btn-ghost btn-sm" onclick="playSpecial('${s.id}')" title="${s.text}">
+      ${s.emoji} ${s.name}
+    </button>`
+  ).join('');
+}
+renderSpecialQuick();
+
+function playSpecial(id) {
+  const s = SPECIALS.find(x => x.id===id);
+  if (!s) return;
+  const log = document.getElementById('match-log');
+  const entry = document.createElement('div');
+  entry.className = 'log-entry log-card';
+  entry.textContent = `✨ Carta jugada: ${s.emoji} ${s.name} — ${s.short || s.text.slice(0,60)}`;
+  log.prepend(entry);
+}
+
+// ═══════════════════════════════════════════
+// TACTICS
+// ═══════════════════════════════════════════
+function drawFormation(key) {
+  const f = FORMATIONS[key];
+  if (!f) return;
+  document.getElementById('form-name').textContent = key;
+  document.getElementById('form-style').textContent = f.style;
+  document.getElementById('form-positions').innerHTML = f.pos.map((p,i) =>
+    `<span style="display:inline-block;margin-right:.5rem;padding:.1rem .4rem;background:var(--surface2);border-radius:4px;font-size:.65rem;font-weight:600">${p}</span>`
+  ).join('');
+
+  const board = document.getElementById('pitch-players');
+  board.innerHTML = f.coords.map((c, i) => {
+    const [x, y] = c;
+    const pos = f.pos[i] || '?';
+    const isGK = i === 0;
+    const color = isGK ? '#ffd600' : '#00e676';
+    return `<div class="p-mark" style="left:${x}%;top:${y}%">
+      <div class="p-dot" style="border-color:${color};color:${color};background:color-mix(in srgb,${color} 15%,transparent)">${pos}</div>
+    </div>`;
+  }).join('');
+}
+
+drawFormation('4-4-2');
+document.getElementById('formation-select').addEventListener('change', e => drawFormation(e.target.value));
+
+// ═══════════════════════════════════════════
+// PACK OPENER
+// ═══════════════════════════════════════════
+const PACK_CONFIG = {
+  basic:   { count:3, weights:{Legendaria:.01, Épica:.05, Rara:.15, Infrecuente:.29, Común:.5} },
+  rare:    { count:3, weights:{Legendaria:.03, Épica:.1,  Rara:.3,  Infrecuente:.37, Común:.2} },
+  epic:    { count:4, weights:{Legendaria:.07, Épica:.25, Rara:.35, Infrecuente:.23, Común:.1} },
+  legend:  { count:5, weights:{Legendaria:.2,  Épica:.3,  Rara:.3,  Infrecuente:.15, Común:.05} },
+  special: { count:3, type:'special' },
+  mega:    { count:10, weights:{Legendaria:.12, Épica:.2,  Rara:.3,  Infrecuente:.25, Común:.13} }
+};
+
+function weightedRarity(weights) {
+  const r = Math.random();
+  let acc = 0;
+  for (const [k,v] of Object.entries(weights)) {
+    acc += v;
+    if (r < acc) return k;
+  }
+  return 'Común';
+}
+
+let packHistory = [];
+
+function openPack(type) {
+  const cfg = PACK_CONFIG[type];
+  const result = document.getElementById('pack-result');
+  result.innerHTML = '';
+  const pulled = [];
+
+  if (cfg.type === 'special') {
+    for (let i=0; i<cfg.count; i++) {
+      const s = SPECIALS[Math.floor(Math.random()*SPECIALS.length)];
+      pulled.push({name: s.emoji+' '+s.name, rarity:'Épica', isSpecial:true});
+    }
+  } else {
+    for (let i=0; i<cfg.count; i++) {
+      const rarity = weightedRarity(cfg.weights);
+      const pool = PLAYERS.filter(p => p.rarity === rarity);
+      const p = pool.length ? pool[Math.floor(Math.random()*pool.length)] : PLAYERS[Math.floor(Math.random()*PLAYERS.length)];
+      pulled.push({name: p.flag+' '+p.name, rarity: p.rarity, ovr: p.ovr});
+    }
+  }
+
+  packHistory.push(...pulled);
+
+  result.innerHTML = pulled.map(p => {
+    const rc = RARITY_COLOR[p.rarity] || 'var(--muted)';
+    const rk = RARITY_KEY[p.rarity] || 'C';
+    return `<div class="pull-pill rarity-${rk}" style="--rc:${rc};animation:fadeUp .3s ease">${p.name} ${p.ovr ? `<span style="opacity:.6">(${p.ovr})</span>` : ''}</div>`;
+  }).join('');
+
+  const legendCount = packHistory.filter(p => p.rarity==='Legendaria').length;
+  const epicCount = packHistory.filter(p => p.rarity==='Épica').length;
+  document.getElementById('pack-stats').textContent =
+    `Sesión: ${packHistory.length} cartas · ${legendCount} Legendarias · ${epicCount} Épicas`;
+}
+
+// ═══════════════════════════════════════════
+// SPECIALS GRID
+// ═══════════════════════════════════════════
+function renderSpecials() {
+  const grid = document.getElementById('specials-grid');
+  const specialColors = {
+    'atk': 'rgba(255,23,68,.12)', 'def': 'rgba(41,121,255,.12)',
+    'both': 'rgba(170,0,255,.1)', 'sup': 'rgba(255,214,0,.1)'
+  };
+  grid.innerHTML = SPECIALS.map(s => {
+    const sc = s.sup ? '#ffd600' : s.roles.includes('atk') && s.roles.includes('def') ? '#aa00ff' :
+               s.roles.includes('atk') ? '#ff1744' : '#2979ff';
+    const roleBadges = s.roles.map(r =>
+      `<span class="role-badge role-${r}">${r === 'atk' ? '⚔ Ataque' : '🛡 Defensa'}</span>`
+    ).join('');
+    return `<div class="card special-card" style="--sc:${sc};cursor:pointer" onclick="showSpecialModal('${s.id}')">
+      ${s.sup ? '<div class="super-badge">⚡ SUPER</div>' : ''}
+      <div class="special-emoji">${s.emoji}</div>
+      <div class="special-name">${s.name}</div>
+      <div style="margin:.3rem 0">${roleBadges}</div>
+      <div class="special-text">${s.short || s.text.slice(0,80)}</div>
+    </div>`;
+  }).join('');
+}
+renderSpecials();
+
+// ═══════════════════════════════════════════
+// MODAL
+// ═══════════════════════════════════════════
+function showPlayerModal(id) {
+  const p = PLAYERS.find(x => x.id===id);
+  if (!p) return;
+  const rc = RARITY_COLOR[p.rarity] || 'var(--muted)';
+  const rk = RARITY_KEY[p.rarity] || 'C';
+  document.getElementById('modal-content').innerHTML = `
+    <div class="rarity-${rk}" style="--rc:${rc}">
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem">
+        <div class="ovr-ring" style="--pct:${ovrPct(p.ovr)};--rc:${rc};width:60px;height:60px;font-size:1.1rem">
+          <span class="ovr-num">${p.ovr}</span>
+        </div>
         <div>
-          <div style="font-weight:800; font-size:1.05rem; color:#fff;">APK Jugable Disponible para Descargar</div>
-          <div style="font-size:0.8rem; color:var(--text-muted);">Instálalo en tu móvil Android para probar los penaltis 3D en Godot de forma nativa.</div>
+          <div style="font-size:1.1rem;font-weight:800">${p.flag} ${p.name}</div>
+          <div style="font-size:.75rem;color:var(--muted);margin-top:.2rem">${p.country} · ${p.pos} · ${p.tier}</div>
+          <div style="margin-top:.3rem">
+            <span class="rarity-badge rarity-${rk}" style="--rc:${rc}">${p.rarity}</span>
+          </div>
         </div>
       </div>
-      <div style="display:flex; gap:0.6rem; flex-wrap:wrap;">
-        <a href="./downloads/Football-Cards-Godot-3D.apk" download class="btn-github" style="background:linear-gradient(135deg, #00e676, #00b0ff); color:#050b14; font-weight:800; border:none;">
-          ⬇️ Descargar APK Godot 3D (28 MB)
-        </a>
-        <a href="https://github.com/pabloprietorecio-afk/Football-Cards-Godot/releases/tag/v1.0.0-preview" target="_blank" class="btn-github">
-          Ver en GitHub Releases ↗
-        </a>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:1rem;font-size:.75rem">
+        <div class="card" style="padding:.5rem .75rem;text-align:center">
+          <div style="color:var(--muted);font-size:.6rem">VELOCIDAD</div>
+          <div style="font-size:1.1rem;font-weight:800;color:${rc}">${p.spd} km/h</div>
+        </div>
+        <div class="card" style="padding:.5rem .75rem;text-align:center">
+          <div style="color:var(--muted);font-size:.6rem">VALOR</div>
+          <div style="font-size:1.1rem;font-weight:800;color:var(--gold)">${fmtVal(p.value)}</div>
+        </div>
       </div>
+      <div style="font-size:.75rem;font-weight:600;color:var(--muted);margin-bottom:.5rem">ESTADÍSTICAS</div>
+      ${statBarHTML(p.stats, rc)}
+      ${p.trait ? `<div style="margin-top:.75rem;font-size:.7rem;background:var(--surface);border-radius:8px;padding:.5rem .75rem;color:var(--muted2)">🎯 Rasgo: <strong style="color:var(--text)">${p.trait}</strong></div>` : ''}
+    </div>`;
+  document.getElementById('modal').classList.add('open');
+}
+
+function showSpecialModal(id) {
+  const s = SPECIALS.find(x => x.id===id);
+  if (!s) return;
+  const roleBadges = s.roles.map(r =>
+    `<span class="role-badge role-${r}">${r==='atk'?'⚔ Ataque':'🛡 Defensa'}</span>`
+  ).join(' ');
+  document.getElementById('modal-content').innerHTML = `
+    <div style="text-align:center;margin-bottom:1rem">
+      <div style="font-size:3rem">${s.emoji}</div>
+      <div style="font-size:1.2rem;font-weight:800;margin:.5rem 0">${s.name}</div>
+      ${s.sup ? '<div class="super-badge" style="margin-bottom:.5rem">⚡ CARTA SUPER</div>' : ''}
+      <div>${roleBadges}</div>
     </div>
-
-    <!-- TAB 1: 3D PROTOTYPE -->
-    <div id="tab-3d-proto" class="tab-content active">
-      <div class="viewport-grid">
-        
-        <!-- 3D Canvas Container -->
-        <div class="canvas-card">
-          <canvas id="three-canvas"></canvas>
-          <div id="aim-reticle" class="aim-reticle"></div>
-
-          <div class="canvas-hud">
-            <div class="hud-chip">
-              <span>TANDA DE PENALTIS</span>
-              <span class="score" id="hud-score">0 - 0</span>
-            </div>
-            <div class="hud-chip" id="hud-status">
-              Haz clic / toca la portería para chutar
-            </div>
-          </div>
-
-          <div class="canvas-controls-overlay">
-            <button class="overlay-btn" onclick="setCameraMode('tv')">📺 Cámara TV</button>
-            <button class="overlay-btn" onclick="setCameraMode('behind')">🎯 Detrás Portería</button>
-            <button class="overlay-btn" onclick="setCameraMode('orbit')">🔄 Órbita 3D</button>
-            <button class="overlay-btn" onclick="resetShootout()">🔁 Reiniciar Tanda</button>
-          </div>
-        </div>
-
-        <!-- Right Control Panel -->
-        <div class="controls-panel">
-          <div>
-            <div class="panel-section-title">☁️ Sistema Meteorológico</div>
-            <div class="control-grid">
-              <button class="control-btn active" onclick="setWeather('clear', this)">☀️ Sol</button>
-              <button class="control-btn" onclick="setWeather('rain', this)">🌧️ Lluvia</button>
-              <button class="control-btn" onclick="setWeather('fog', this)">🌫️ Niebla</button>
-              <button class="control-btn" onclick="setWeather('night', this)">🌙 Noche</button>
-            </div>
-          </div>
-
-          <div>
-            <div class="panel-section-title">🌱 Césped (Shader Godot)</div>
-            <div class="control-grid">
-              <button class="control-btn active" onclick="setPitchWetness(0.0, this)">Seco (PBR)</button>
-              <button class="control-btn" onclick="setPitchWetness(0.85, this)">Húmedo (Reflejos)</button>
-            </div>
-          </div>
-
-          <div>
-            <div class="panel-section-title">⚡ Potencia de Disparo</div>
-            <div class="power-gauge">
-              <div class="sweet-spot"></div>
-              <div class="power-fill" id="power-bar"></div>
-            </div>
-            <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:var(--text-muted); margin-top:0.3rem;">
-              <span>Mín</span>
-              <span style="color:#00e676;">Zona Verde (Óptima)</span>
-              <span>Máx</span>
-            </div>
-          </div>
-
-          <div style="flex:1; display:flex; flex-direction:column;">
-            <div class="panel-section-title">📜 Registro de Tanda</div>
-            <div class="shootout-log" id="shootout-log">
-              <div class="log-item">Tanda lista. 5 lanzamientos por equipo.</div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- TAB 2: CARD MATCH SIMULATOR -->
-    <div id="tab-card-match" class="tab-content">
-      <div style="max-width: 800px; margin: 0 auto; background: var(--bg-card); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 1.5rem;">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 1rem; margin-bottom: 1rem;">
-          <div>
-            <h2 style="font-size: 1.25rem; font-weight: 800;">Motor de Partido por Cartas (card_match.gd)</h2>
-            <p style="font-size: 0.8rem; color: var(--text-muted);">Simulación determinista basada en el motor desacoplado de Godot</p>
-          </div>
-          <button class="btn-github" onclick="startCardMatch()">Reiniciar Partido</button>
-        </div>
-
-        <div style="display: flex; justify-content: space-around; background: #050911; padding: 1rem; border-radius: 12px; margin-bottom: 1rem; text-align: center;">
-          <div>
-            <div style="font-size: 0.75rem; color: var(--text-muted);">LOCAL</div>
-            <div style="font-size: 2rem; font-weight: 900; color: #fff;" id="cm-score-home">0</div>
-          </div>
-          <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
-            <div style="font-family: var(--font-mono); font-size: 1.1rem; color: var(--accent-gold);" id="cm-minute">12'</div>
-            <div style="font-size: 0.75rem; color: var(--accent-green);" id="cm-possession">Posesión: Local</div>
-          </div>
-          <div>
-            <div style="font-size: 0.75rem; color: var(--text-muted);">VISITANTE</div>
-            <div style="font-size: 2rem; font-weight: 900; color: #fff;" id="cm-score-away">0</div>
-          </div>
-        </div>
-
-        <!-- Field Zone Indicator -->
-        <div style="margin-bottom: 1.5rem;">
-          <div style="display:flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.4rem;">
-            <span>Área Propia (0m)</span>
-            <span id="cm-zone-label">Centro del Campo (50m)</span>
-            <span>Área Rival (100m)</span>
-          </div>
-          <div style="height: 10px; background: #050b14; border-radius: 999px; overflow: hidden; position: relative;">
-            <div id="cm-zone-bar" style="height: 100%; width: 50%; background: linear-gradient(90deg, #00b0ff, #00e676); transition: width 0.3s;"></div>
-          </div>
-        </div>
-
-        <!-- Hand of Cards -->
-        <div class="panel-section-title">🃏 Mano de Acciones Tácticas</div>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.75rem; margin-bottom: 1.5rem;" id="cm-hand-cards">
-          <!-- Filled by JS -->
-        </div>
-
-        <div class="panel-section-title">📜 Relato de Jugadas</div>
-        <div class="shootout-log" id="cm-log" style="max-height: 180px;">
-          <div class="log-item">El árbitro pita el saque inicial. ¡Comienza el encuentro!</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB 3: TACTICS & FORMATIONS -->
-    <div id="tab-tactics" class="tab-content">
-      <div style="max-width: 900px; margin: 0 auto;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:1rem;">
-          <div>
-            <h2 style="font-size: 1.3rem; font-weight: 800;">Pizarra Táctica y Formaciones</h2>
-            <p style="color: var(--text-muted); font-size: 0.85rem;">Sistema táctico de alineación (`formation_service.gd` y `formations.json`)</p>
-          </div>
-          <div style="display:flex; gap:0.5rem;" id="formation-buttons">
-            <!-- Filled by JS -->
-          </div>
-        </div>
-
-        <div style="background: var(--bg-card); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 1.25rem;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem;">
-            <div>
-              <span style="font-weight:700; color:var(--accent-gold);" id="tactics-style-name">Estilo: Ataque por bandas</span>
-              <span style="font-size:0.8rem; color:var(--text-muted); margin-left:0.6rem;" id="tactics-modifiers">Mod: +1 Regate, -1 Corte</span>
-            </div>
-            <div style="font-size:0.8rem; color:var(--text-muted);">11 Titulares Configurados</div>
-          </div>
-
-          <div class="tactics-board" id="tactics-board">
-            <div class="pitch-center-line"></div>
-            <div class="pitch-center-circle"></div>
-            <!-- Player pins injected by JS -->
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB 4: PACKS & MARKET -->
-    <div id="tab-packs" class="tab-content">
-      <div class="pack-opener-box">
-        <h2 style="font-size: 1.4rem; font-weight: 900; margin-bottom: 0.4rem;">Tienda de Sobres y Mercado de Fichajes</h2>
-        <p style="color: var(--text-muted); font-size: 0.85rem;">Probabilidades oficiales del juego original y sistema de pity garantizado (`market_service.gd`)</p>
-
-        <div class="pack-button-container">
-          <div class="pack-card-btn" onclick="openPack('cartas')">
-            <div style="font-size:2rem; margin-bottom:0.4rem;">📦</div>
-            <div style="font-weight:800; font-size:1.1rem; color:#ffd700;">Sobre de Cartas</div>
-            <div style="font-size:0.75rem; color:#94a3b8; margin:0.4rem 0;">5 Cartas · Infrecuente o mejor</div>
-            <div style="font-weight:700; color:#38bdf8; font-size:0.9rem;">300.000 €</div>
-          </div>
-
-          <div class="pack-card-btn" style="border-color:#a855f7;" onclick="openPack('premium')">
-            <div style="font-size:2rem; margin-bottom:0.4rem;">✨</div>
-            <div style="font-weight:800; font-size:1.1rem; color:#c084fc;">Sobre de Oro</div>
-            <div style="font-size:0.75rem; color:#94a3b8; margin:0.4rem 0;">5 Cartas · Rara o mejor garantizada</div>
-            <div style="font-weight:700; color:#38bdf8; font-size:0.9rem;">1.200.000 €</div>
-          </div>
-        </div>
-
-        <div class="panel-section-title" style="justify-content:center;">Cartas Obtenidas</div>
-        <div class="opened-cards-area" id="opened-cards-area">
-          <div style="color:var(--text-muted); font-size:0.85rem; margin-top:2rem;">Pulsa sobre un sobre para abrirlo y descubrir los futbolistas obtenidos.</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB 5: ROSTER (168 PLAYERS) -->
-    <div id="tab-roster" class="tab-content">
-      <div class="cards-filter-bar">
-        <input type="text" id="roster-search" class="search-input" placeholder="Buscar jugador por nombre o posición..." oninput="filterRoster()">
-        <button class="control-btn active" onclick="setPosFilter('ALL', this)">Todos (168)</button>
-        <button class="control-btn" onclick="setPosFilter('POR', this)">Porteros</button>
-        <button class="control-btn" onclick="setPosFilter('DEF', this)">Defensas</button>
-        <button class="control-btn" onclick="setPosFilter('MED', this)">Medios</button>
-        <button class="control-btn" onclick="setPosFilter('DEL', this)">Delanteros</button>
-      </div>
-
-      <div class="cards-grid" id="cards-roster-grid">
-        <!-- Rendered by JS -->
-      </div>
-    </div>
-
-    <!-- TAB 6: SPECIAL CARDS -->
-    <div id="tab-specials" class="tab-content">
-      <div style="margin-bottom: 1.5rem;">
-        <h2 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 0.3rem;">Catálogo de 17 Cartas Especiales</h2>
-        <p style="color: var(--text-muted); font-size: 0.85rem;">Mecánicas tácticas resueltas en tiempo de ejecución por `special_resolver.gd`.</p>
-      </div>
-      <div class="specials-grid" id="specials-grid">
-        <!-- Injected by JS -->
-      </div>
-    </div>
-
-    <!-- TAB 7: AUDIO SOUNDBOARD -->
-    <div id="tab-audio" class="tab-content">
-      <div style="margin-bottom: 1.25rem;">
-        <h2 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 0.3rem;">Mesa de Sonido 3D Espacial (AudioDirector)</h2>
-        <p style="color: var(--text-muted); font-size: 0.85rem;">Prueba los 75 efectos de sonido reales incluidos en el proyecto de Godot.</p>
-      </div>
-      <div class="soundboard-grid" id="soundboard-grid">
-        <!-- Rendered by JS -->
-      </div>
-    </div>
-
-    <!-- TAB 8: OBJECTIVES & TESTS -->
-    <div id="tab-objectives" class="tab-content">
-      <div style="margin-bottom: 1.5rem;">
-        <h2 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 0.3rem;">10 Objetivos de la Migración a Godot 4.7</h2>
-        <p style="color: var(--text-muted); font-size: 0.85rem;">Detalle de arquitectura, shaders, audio y pipeline implementados en el repositorio.</p>
-      </div>
-
-      <div class="objectives-grid" style="margin-bottom: 2rem;">
-        
-        <div class="objective-card">
-          <div class="obj-header">
-            <span class="obj-number">OBJETIVO 01</span>
-            <span class="obj-badge">Integrado</span>
-          </div>
-          <div class="obj-title">Animaciones 3D Ricas (+100)</div>
-          <div class="obj-desc">Capa semántica desacoplada de la simulación mediante AnimationDirector.gd. Permite invocar acciones tácticas sin depender de los nombres físicos de los clips.</div>
-          <span class="obj-tech-tag">scripts/animation_director.gd</span>
-        </div>
-
-        <div class="objective-card">
-          <div class="obj-header">
-            <span class="obj-number">OBJETIVO 02</span>
-            <span class="obj-badge">PBR Ready</span>
-          </div>
-          <div class="obj-title">Jugadores Hiperrealistas (PBR)</div>
-          <div class="obj-desc">Pipeline de personajes preparado para materiales PBR de tela, arrugas dinámicas, sudor progresivo y desgaste sobre césped. Malla base placeholder CC0 desacoplada.</div>
-          <span class="obj-tech-tag">assets/player_base.glb + docs/ASSET_REQUIREMENTS.md</span>
-        </div>
-
-        <div class="objective-card">
-          <div class="obj-header">
-            <span class="obj-number">OBJETIVO 03</span>
-            <span class="obj-badge">Shader Funcional</span>
-          </div>
-          <div class="obj-title">Césped de Nueva Generación</div>
-          <div class="obj-desc">Shader espacial pitch.gdshader con franjas de segado parametrizadas y respuesta a la humedad alterando rugosidad y especularidad PBR.</div>
-          <span class="obj-tech-tag">shaders/pitch.gdshader</span>
-        </div>
-
-        <div class="objective-card">
-          <div class="obj-header">
-            <span class="obj-number">OBJETIVO 04</span>
-            <span class="obj-badge">Integrado</span>
-          </div>
-          <div class="obj-title">Sistema Meteorológico Dinámico</div>
-          <div class="obj-desc">Controlador WeatherController.gd con estados CLEAR, OVERCAST, RAIN, STORM y FOG. Controla intensidad solar, niebla ambiental y precipitación.</div>
-          <span class="obj-tech-tag">scripts/weather_controller.gd</span>
-        </div>
-
-        <div class="objective-card">
-          <div class="obj-header">
-            <span class="obj-number">OBJETIVO 05</span>
-            <span class="obj-badge">Integrado</span>
-          </div>
-          <div class="obj-title">Estadios Vivos y Ambientación</div>
-          <div class="obj-desc">Iluminación dinámica optimizada para compatibilidad móvil, focos nocturnos, público reactivo por eventos sonoros y gradas optimizadas con LODs.</div>
-          <span class="obj-tech-tag">autoload/quality_service.gd</span>
-        </div>
-
-        <div class="objective-card">
-          <div class="obj-header">
-            <span class="obj-number">OBJETIVO 06</span>
-            <span class="obj-badge">75 Clips</span>
-          </div>
-          <div class="obj-title">Audio Espacial 3D y Grada Reactiva</div>
-          <div class="obj-desc">AudioDirector.gd con 75 clips de sonido integrados con manifiesto y créditos: cánticos, pitos, silbatos, remates al poste, red, abucheos y ovaciones.</div>
-          <span class="obj-tech-tag">autoload/audio_director.gd + audio/manifest.json</span>
-        </div>
-
-        <div class="objective-card">
-          <div class="obj-header">
-            <span class="obj-number">OBJETIVO 07</span>
-            <span class="obj-badge">Integrado</span>
-          </div>
-          <div class="obj-title">Cinemáticas y Repeticiones</div>
-          <div class="obj-desc">PresentationDirector.gd orquesta la presentación del encuentro, animaciones de túnel de vestuarios, alineaciones en pantalla, repeticiones y MVP.</div>
-          <span class="obj-tech-tag">scripts/presentation_director.gd</span>
-        </div>
-
-        <div class="objective-card">
-          <div class="obj-header">
-            <span class="obj-number">OBJETIVO 08</span>
-            <span class="obj-badge">Integrado</span>
-          </div>
-          <div class="obj-title">Cámaras Televisivas Modernas</div>
-          <div class="obj-desc">Múltiples modos de cámara: Broadcast TV (ángulo lateral de retransmisión), Detrás de Portería (para tanda), Táctica Aérea y Cámara Libre.</div>
-          <span class="obj-tech-tag">scenes/main.tscn + scenes/app_shell.tscn</span>
-        </div>
-
-        <div class="objective-card">
-          <div class="obj-header">
-            <span class="obj-number">OBJETIVO 09</span>
-            <span class="obj-badge">GL Compatibility</span>
-          </div>
-          <div class="obj-title">Iluminación y Rendimiento Móvil</div>
-          <div class="obj-desc">project.godot configurado en modo rendering gl_compatibility garantizando 60 FPS estables en Android sin sobrecalentamiento.</div>
-          <span class="obj-tech-tag">project.godot: renderer="gl_compatibility"</span>
-        </div>
-
-        <div class="objective-card">
-          <div class="obj-header">
-            <span class="obj-number">OBJETIVO 10</span>
-            <span class="obj-badge">Completado</span>
-          </div>
-          <div class="obj-title">Arquitectura Limpia Desacoplada</div>
-          <div class="obj-desc">38 módulos GDScript limpios, 14 Autoloads, 168 futbolistas con datos Opta, 6 formaciones tácticas y 17 cartas especiales. 100% de tests estáticos superados.</div>
-          <span class="obj-tech-tag">tests_smoke.py + regression_static.py</span>
-        </div>
-
-      </div>
-
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
-        <div>
-          <div class="panel-section-title">🧪 Resultados de Tests Automatizados</div>
-          <div class="terminal-box">
-$ python3 tests_smoke.py
-SMOKE_OK scripts= 38 positions= 145
-[✓] project.godot: gl_compatibility validado
-[✓] scenes/main.tscn y scenes/app_shell.tscn validadas
-[✓] autoloads (GameState, AudioDirector, LeagueService, ManagerService, ProgressionService)
-[✓] shaders/pitch.gdshader verificado
-[✓] assets/player_base.glb encabezado glTF verificado
-
-$ python3 tests/regression_static.py
-REGRESSION_STATIC_OK audio=75 players=145
-CAREER_UI_STATIC_OK
-MANAGER_ECONOMY_UI_OK
-CONNECTED_UI_PRESENTATION_OK
->>> 100% PARIDAD ESTÁTICA Y ARQUITECTURA COMPLETADAS.
-          </div>
-        </div>
-
-        <div>
-          <div class="panel-section-title">📁 Estructura de Autoloads Registrados</div>
-          <div class="terminal-box" style="color: #93c5fd;">
-[autoload]
-GameState = "*res://autoload/game_state.gd"
-AudioDirector = "*res://autoload/audio_director.gd"
-LeagueService = "*res://autoload/league_service.gd"
-ManagerService = "*res://autoload/manager_service.gd"
-ProgressionService = "*res://autoload/progression_service.gd"
-RewardService = "*res://autoload/reward_service.gd"
-FormationService = "*res://autoload/formation_service.gd"
-CareerService = "*res://autoload/career_service.gd"
-SettingsService = "*res://autoload/settings_service.gd"
-EconomyService = "*res://autoload/economy_service.gd"
-ChallengeService = "*res://autoload/challenge_service.gd"
-MarketService = "*res://autoload/market_service.gd"
-TrainingService = "*res://autoload/training_service.gd"
-QualityService = "*res://autoload/quality_service.gd"
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-  </main>
-
-  <!-- FOOTER -->
-  <footer>
-    <p>Football Cards Godot Edition — Migración nativa completada con éxito. Todos los archivos están sincronizados y validados.</p>
-  </footer>
-
-  <!-- SCRIPT LOGIC -->
-  <script>
-    // TAB NAVIGATION
-    function switchTab(tabId) {
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-      
-      const targetBtn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.getAttribute('onclick').includes(tabId));
-      if (targetBtn) targetBtn.classList.add('active');
-      
-      const targetContent = document.getElementById('tab-' + tabId);
-      if (targetContent) targetContent.classList.add('active');
-
-      if (tabId === '3d-proto') {
-        setTimeout(onWindowResize, 100);
-      }
-    }
-
-    // --- THREE.JS 3D PROTOTYPE SETUP ---
-    let scene, camera, renderer, ball, goal, keeper, pitchPlane, rainParticles;
-    let cameraMode = 'tv';
-    let isShooting = false;
-    let ballVelocity = new THREE.Vector3();
-    let keeperVelocity = new THREE.Vector3();
-    let currentScore = [0, 0];
-    let kicksCount = 0;
-    let powerProgress = 0.72;
-    let powerDir = 1;
-
-    function init3D() {
-      const container = document.getElementById('three-canvas').parentElement;
-      const canvas = document.getElementById('three-canvas');
-      const width = container.clientWidth;
-      const height = container.clientHeight;
-
-      scene = new THREE.Scene();
-      scene.background = new THREE.Color(0x0a111c);
-      scene.fog = new THREE.FogExp2(0x0a111c, 0.012);
-
-      camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 150);
-      updateCameraPosition();
-
-      renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
-      renderer.setSize(width, height);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      renderer.shadowMap.enabled = true;
-      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-
-      // Lights
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
-      scene.add(ambientLight);
-
-      const mainLight = new THREE.DirectionalLight(0xfffaed, 1.2);
-      mainLight.position.set(15, 25, 20);
-      mainLight.castShadow = true;
-      mainLight.shadow.mapSize.width = 1024;
-      mainLight.shadow.mapSize.height = 1024;
-      scene.add(mainLight);
-
-      // Pitch (Ground)
-      const pitchGeo = new THREE.PlaneGeometry(60, 90);
-      const pitchMat = new THREE.MeshStandardMaterial({
-        color: 0x1f5c2a,
-        roughness: 0.85,
-        metalness: 0.1
-      });
-      pitchPlane = new THREE.Mesh(pitchGeo, pitchMat);
-      pitchPlane.rotation.x = -Math.PI / 2;
-      pitchPlane.receiveShadow = true;
-      scene.add(pitchPlane);
-
-      createPitchLines();
-      createGoal();
-
-      // Ball
-      const ballGeo = new THREE.SphereGeometry(0.24, 24, 24);
-      const ballMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.4 });
-      ball = new THREE.Mesh(ballGeo, ballMat);
-      ball.castShadow = true;
-      ball.position.set(0, 0.24, 11);
-      scene.add(ball);
-
-      createGoalkeeper();
-      createRain();
-
-      canvas.addEventListener('mousemove', onCanvasMouseMove);
-      canvas.addEventListener('click', onCanvasClick);
-      canvas.addEventListener('touchstart', onTouchStart, { passive: false });
-
-      window.addEventListener('resize', onWindowResize);
-      animate();
-    }
-
-    function createPitchLines() {
-      const lineMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-      const goalLine = new THREE.Mesh(new THREE.PlaneGeometry(30, 0.12), lineMat);
-      goalLine.rotation.x = -Math.PI / 2;
-      goalLine.position.set(0, 0.01, 0);
-      scene.add(goalLine);
-
-      const spot = new THREE.Mesh(new THREE.CircleGeometry(0.2, 16), lineMat);
-      spot.rotation.x = -Math.PI / 2;
-      spot.position.set(0, 0.01, 11);
-      scene.add(spot);
-
-      const boxW = 20, boxL = 16.5;
-      const leftLine = new THREE.Mesh(new THREE.PlaneGeometry(0.12, boxL), lineMat);
-      leftLine.rotation.x = -Math.PI / 2;
-      leftLine.position.set(-boxW/2, 0.01, boxL/2);
-      scene.add(leftLine);
-
-      const rightLine = new THREE.Mesh(new THREE.PlaneGeometry(0.12, boxL), lineMat);
-      rightLine.rotation.x = -Math.PI / 2;
-      rightLine.position.set(boxW/2, 0.01, boxL/2);
-      scene.add(rightLine);
-
-      const frontLine = new THREE.Mesh(new THREE.PlaneGeometry(boxW, 0.12), lineMat);
-      frontLine.rotation.x = -Math.PI / 2;
-      frontLine.position.set(0, 0.01, boxL);
-      scene.add(frontLine);
-    }
-
-    function createGoal() {
-      goal = new THREE.Group();
-      const postMat = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.8, roughness: 0.2 });
-
-      const postRadius = 0.08;
-      const postGeo = new THREE.CylinderGeometry(postRadius, postRadius, 2.44, 16);
-      const leftPost = new THREE.Mesh(postGeo, postMat);
-      leftPost.position.set(-3.66, 1.22, 0);
-      leftPost.castShadow = true;
-      goal.add(leftPost);
-
-      const rightPost = new THREE.Mesh(postGeo, postMat);
-      rightPost.position.set(3.66, 1.22, 0);
-      rightPost.castShadow = true;
-      goal.add(rightPost);
-
-      const barGeo = new THREE.CylinderGeometry(postRadius, postRadius, 7.32, 16);
-      const bar = new THREE.Mesh(barGeo, postMat);
-      bar.rotation.z = Math.PI / 2;
-      bar.position.set(0, 2.44, 0);
-      bar.castShadow = true;
-      goal.add(bar);
-
-      const netMat = new THREE.MeshBasicMaterial({ color: 0xcccccc, wireframe: true, transparent: true, opacity: 0.35 });
-      const netGeo = new THREE.BoxGeometry(7.32, 2.44, 1.8);
-      const net = new THREE.Mesh(netGeo, netMat);
-      net.position.set(0, 1.22, -0.9);
-      goal.add(net);
-
-      scene.add(goal);
-    }
-
-    function createGoalkeeper() {
-      keeper = new THREE.Group();
-      const bodyGeo = new THREE.CylinderGeometry(0.28, 0.24, 1.3, 12);
-      const bodyMat = new THREE.MeshStandardMaterial({ color: 0xffaa00, roughness: 0.5 });
-      const body = new THREE.Mesh(bodyGeo, bodyMat);
-      body.position.y = 1.1;
-      body.castShadow = true;
-      keeper.add(body);
-
-      const headGeo = new THREE.SphereGeometry(0.18, 16, 16);
-      const headMat = new THREE.MeshStandardMaterial({ color: 0xffd1b3 });
-      const head = new THREE.Mesh(headGeo, headMat);
-      head.position.y = 1.9;
-      keeper.add(head);
-
-      keeper.position.set(0, 0, 0.4);
-      scene.add(keeper);
-    }
-
-    function createRain() {
-      const rainCount = 1200;
-      const rainGeo = new THREE.BufferGeometry();
-      const positions = new Float32Array(rainCount * 3);
-      for (let i = 0; i < rainCount * 3; i += 3) {
-        positions[i] = (Math.random() - 0.5) * 40;
-        positions[i+1] = Math.random() * 25;
-        positions[i+2] = (Math.random() - 0.5) * 40;
-      }
-      rainGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-      const rainMat = new THREE.PointsMaterial({
-        color: 0x90caf9,
-        size: 0.12,
-        transparent: true,
-        opacity: 0.6
-      });
-      rainParticles = new THREE.Points(rainGeo, rainMat);
-      rainParticles.visible = false;
-      scene.add(rainParticles);
-    }
-
-    function updateCameraPosition() {
-      if (cameraMode === 'tv') {
-        camera.position.set(12, 9, 16);
-        camera.lookAt(0, 1.2, 2);
-      } else if (cameraMode === 'behind') {
-        camera.position.set(0, 2.2, 14.5);
-        camera.lookAt(0, 1.4, 0);
-      } else if (cameraMode === 'orbit') {
-        camera.position.set(0, 14, 22);
-        camera.lookAt(0, 1, 4);
-      }
-    }
-
-    function setCameraMode(mode) {
-      cameraMode = mode;
-      updateCameraPosition();
-    }
-
-    function setWeather(type, btn) {
-      document.querySelectorAll('#tab-3d-proto .controls-panel .control-grid:first-child .control-btn').forEach(b => b.classList.remove('active'));
-      if (btn) btn.classList.add('active');
-
-      if (type === 'clear') {
-        scene.background.setHex(0x0a111c);
-        scene.fog.color.setHex(0x0a111c);
-        scene.fog.density = 0.008;
-        rainParticles.visible = false;
-      } else if (type === 'rain') {
-        scene.background.setHex(0x060c14);
-        scene.fog.color.setHex(0x060c14);
-        scene.fog.density = 0.02;
-        rainParticles.visible = true;
-        setPitchWetness(0.85);
-      } else if (type === 'fog') {
-        scene.background.setHex(0x162030);
-        scene.fog.color.setHex(0x162030);
-        scene.fog.density = 0.055;
-        rainParticles.visible = false;
-      } else if (type === 'night') {
-        scene.background.setHex(0x020408);
-        scene.fog.color.setHex(0x020408);
-        scene.fog.density = 0.012;
-        rainParticles.visible = false;
-      }
-    }
-
-    function setPitchWetness(wetness, btn) {
-      if (btn) {
-        btn.parentElement.querySelectorAll('.control-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-      }
-      pitchPlane.material.roughness = THREE.MathUtils.lerp(0.86, 0.20, wetness);
-      pitchPlane.material.metalness = THREE.MathUtils.lerp(0.05, 0.45, wetness);
-      pitchPlane.material.needsUpdate = true;
-    }
-
-    function onCanvasMouseMove(e) {
-      if (isShooting) return;
-      const rect = e.target.getBoundingClientRect();
-      const reticle = document.getElementById('aim-reticle');
-      reticle.style.display = 'block';
-      reticle.style.left = (e.clientX - rect.left) + 'px';
-      reticle.style.top = (e.clientY - rect.top) + 'px';
-    }
-
-    function onCanvasClick(e) {
-      if (isShooting) return;
-      const rect = e.target.getBoundingClientRect();
-      const xNorm = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-      const yNorm = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
-      executeShot(xNorm, yNorm);
-    }
-
-    function onTouchStart(e) {
-      if (isShooting || !e.touches.length) return;
-      e.preventDefault();
-      const touch = e.touches[0];
-      const rect = e.target.getBoundingClientRect();
-      const xNorm = ((touch.clientX - rect.left) / rect.width) * 2 - 1;
-      const yNorm = -(((touch.clientY - rect.top) / rect.height) * 2 - 1);
-      executeShot(xNorm, yNorm);
-    }
-
-    function executeShot(xNorm, yNorm) {
-      isShooting = true;
-      document.getElementById('aim-reticle').style.display = 'none';
-      document.getElementById('hud-status').innerText = '¡Disparo ejecutado!';
-
-      const targetX = xNorm * 4.2;
-      const targetY = Math.max(0.3, (yNorm + 0.5) * 2.6);
-
-      const flightTime = 0.65;
-      ballVelocity.set(
-        (targetX - ball.position.x) / flightTime,
-        (targetY - ball.position.y + 0.5 * 9.8 * flightTime * flightTime) / flightTime,
-        (0 - ball.position.z) / flightTime
-      );
-
-      const keeperTargetX = (Math.random() > 0.35) ? targetX * (0.6 + Math.random()*0.5) : (Math.random()-0.5)*4;
-      const keeperTargetY = Math.random() * 2.0;
-      keeperVelocity.set(
-        (keeperTargetX - keeper.position.x) / (flightTime * 0.9),
-        keeperTargetY,
-        0
-      );
-
-      playSound('kick1');
-
-      setTimeout(() => {
-        resolveShotOutcome(targetX, targetY, keeperTargetX);
-      }, flightTime * 1000);
-    }
-
-    function resolveShotOutcome(targetX, targetY, keeperX) {
-      const isGoal = Math.abs(targetX) <= 3.66 && targetY <= 2.44 && Math.abs(targetX - keeperX) > 0.85;
-      const isSaved = Math.abs(targetX) <= 3.66 && targetY <= 2.44 && Math.abs(targetX - keeperX) <= 0.85;
-
-      const log = document.getElementById('shootout-log');
-      const item = document.createElement('div');
-      item.className = 'log-item';
-
-      kicksCount++;
-
-      if (isGoal) {
-        currentScore[0]++;
-        item.classList.add('goal');
-        item.innerText = `Lanzamiento #${kicksCount}: ¡GOOOOL! Chut imparable (${targetX.toFixed(1)}m, ${targetY.toFixed(1)}m).`;
-        playSound('goal1');
-        document.getElementById('hud-status').innerText = '🎉 ¡GOOOOL!';
-      } else if (isSaved) {
-        item.classList.add('saved');
-        item.innerText = `Lanzamiento #${kicksCount}: ¡PARADÓN DEL PORTERO! Mano milagrosa.`;
-        playSound('cheer1');
-        document.getElementById('hud-status').innerText = '🧤 ¡PARADA!';
-      } else {
-        item.classList.add('miss');
-        item.innerText = `Lanzamiento #${kicksCount}: ¡Fuera! El balón se va desviado.`;
-        playSound('groan1');
-        document.getElementById('hud-status').innerText = '❌ ¡FUERA!';
-      }
-
-      log.prepend(item);
-      document.getElementById('hud-score').innerText = `${currentScore[0]} - ${currentScore[1]}`;
-
-      setTimeout(() => {
-        resetBall();
-        document.getElementById('hud-status').innerText = 'Haz clic / toca la portería para chutar';
-      }, 1800);
-    }
-
-    function resetBall() {
-      ball.position.set(0, 0.24, 11);
-      ballVelocity.set(0, 0, 0);
-      keeper.position.set(0, 0, 0.4);
-      keeper.rotation.set(0, 0, 0);
-      keeperVelocity.set(0, 0, 0);
-      isShooting = false;
-    }
-
-    function resetShootout() {
-      currentScore = [0, 0];
-      kicksCount = 0;
-      document.getElementById('hud-score').innerText = '0 - 0';
-      document.getElementById('shootout-log').innerHTML = '<div class="log-item">Tanda reiniciada. 5 lanzamientos por equipo.</div>';
-      resetBall();
-    }
-
-    function onWindowResize() {
-      const container = document.getElementById('three-canvas').parentElement;
-      const width = container.clientWidth;
-      const height = container.clientHeight;
-      camera.aspect = width / height;
-      camera.updateProjectionMatrix();
-      renderer.setSize(width, height);
-    }
-
-    function animate() {
-      requestAnimationFrame(animate);
-
-      powerProgress += 0.015 * powerDir;
-      if (powerProgress >= 1.0) { powerProgress = 1.0; powerDir = -1; }
-      else if (powerProgress <= 0.15) { powerProgress = 0.15; powerDir = 1; }
-      const powerBar = document.getElementById('power-bar');
-      if (powerBar) powerBar.style.width = (powerProgress * 100) + '%';
-
-      if (isShooting) {
-        ball.position.addScaledVector(ballVelocity, 0.016);
-        ballVelocity.y -= 9.8 * 0.016;
-        ball.rotation.x += 0.2;
-
-        if (ball.position.z > 1.0) {
-          keeper.position.x += keeperVelocity.x * 0.016;
-          keeper.rotation.z = -keeperVelocity.x * 0.15;
-        }
-      }
-
-      if (rainParticles && rainParticles.visible) {
-        const pos = rainParticles.geometry.attributes.position.array;
-        for (let i = 1; i < pos.length; i += 3) {
-          pos[i] -= 0.6;
-          if (pos[i] < 0) pos[i] = 25;
-        }
-        rainParticles.geometry.attributes.position.needsUpdate = true;
-      }
-
-      renderer.render(scene, camera);
-    }
-
-    // --- TAB 2: CARD MATCH ENGINE ---
-    const CARD_ACTIONS = [
-      { id: 'pase', name: 'Pase Preciso', skill: 'PAS', attack: true, cost: 10, power: 7 },
-      { id: 'carrera', name: 'Sprint / Carrera', skill: 'VEL', attack: true, cost: 15, power: 8 },
-      { id: 'regate', name: 'Regate Clave', skill: 'REG', attack: true, cost: 18, power: 9 },
-      { id: 'tiro', name: 'Chut a Puerta', skill: 'TIR', attack: true, cost: 25, power: 10 },
-      { id: 'entrada', name: 'Entrada Fuerte', skill: 'DEF', attack: false, cost: 15, power: 8 },
-      { id: 'posicion', name: 'Cerrar Hueco', skill: 'DEF', attack: false, cost: 10, power: 6 },
-      { id: 'despejar', name: 'Despeje Aéreo', skill: 'FIS', attack: false, cost: 12, power: 7 }
-    ];
-
-    let cmState = {
-      minute: 0,
-      score: [0, 0],
-      possession: 0,
-      zone: 50,
-      hand: []
-    };
-
-    function startCardMatch() {
-      cmState.minute = 0;
-      cmState.score = [0, 0];
-      cmState.possession = Math.random() > 0.5 ? 0 : 1;
-      cmState.zone = 50;
-      cmState.hand = [];
-      for (let i = 0; i < 4; i++) {
-        cmState.hand.push(CARD_ACTIONS[Math.floor(Math.random() * CARD_ACTIONS.length)]);
-      }
-      updateCardMatchUI();
-      const log = document.getElementById('cm-log');
-      log.innerHTML = '<div class="log-item">El colegiado señala el inicio. Posesión para el ' + (cmState.possession === 0 ? 'Local' : 'Visitante') + '.</div>';
-    }
-
-    function playTacticalCard(idx) {
-      if (cmState.minute >= 90) return;
-      const card = cmState.hand[idx];
-      cmState.minute += Math.floor(Math.random() * 6) + 3;
-
-      const log = document.getElementById('cm-log');
-      const item = document.createElement('div');
-      item.className = 'log-item';
-
-      const success = Math.random() > 0.3;
-      if (success) {
-        if (card.attack) {
-          cmState.zone = Math.min(100, cmState.zone + card.power * 2.5);
-          item.innerText = `${cmState.minute}': ¡Éxito en ${card.name}! Balón avanza a zona ${cmState.zone.toFixed(0)}m.`;
-          
-          if (cmState.zone >= 85 && Math.random() > 0.45) {
-            cmState.score[0]++;
-            item.className = 'log-item goal';
-            item.innerText = `${cmState.minute}': ¡¡¡GOOOOOOL LOCAL!!! Definición perfecta tras ${card.name}.`;
-            playSound('goal2');
-            cmState.zone = 50;
-            cmState.possession = 1;
-          }
-        } else {
-          cmState.zone = Math.max(0, cmState.zone - card.power * 2);
-          item.innerText = `${cmState.minute}': Buena acción defensiva (${card.name}). Peligro neutralizado.`;
-        }
-      } else {
-        item.className = 'log-item miss';
-        item.innerText = `${cmState.minute}': Fallo en ${card.name}. El rival recupera la posesión.`;
-        cmState.possession = 1 - cmState.possession;
-      }
-
-      log.prepend(item);
-
-      if (cmState.possession === 1 && cmState.minute < 90) {
-        setTimeout(aiTurn, 600);
-      }
-
-      cmState.hand[idx] = CARD_ACTIONS[Math.floor(Math.random() * CARD_ACTIONS.length)];
-      updateCardMatchUI();
-    }
-
-    function aiTurn() {
-      cmState.minute += 3;
-      const log = document.getElementById('cm-log');
-      const item = document.createElement('div');
-      item.className = 'log-item';
-
-      if (Math.random() > 0.5) {
-        cmState.zone = Math.max(0, cmState.zone - 18);
-        item.innerText = `${cmState.minute}': Ataque rival. Se aproximan a nuestra área (zona ${cmState.zone.toFixed(0)}m).`;
-        if (cmState.zone <= 15 && Math.random() > 0.6) {
-          cmState.score[1]++;
-          item.className = 'log-item miss';
-          item.innerText = `${cmState.minute}': Gol del Visitante. Remate cruzado imparable.`;
-          playSound('groan2');
-          cmState.zone = 50;
-          cmState.possession = 0;
-        }
-      } else {
-        item.innerText = `${cmState.minute}': Nuestro equipo presiona y recupera el balón.`;
-        cmState.possession = 0;
-      }
-
-      log.prepend(item);
-      updateCardMatchUI();
-    }
-
-    function updateCardMatchUI() {
-      document.getElementById('cm-minute').innerText = `${cmState.minute}'`;
-      document.getElementById('cm-score-home').innerText = cmState.score[0];
-      document.getElementById('cm-score-away').innerText = cmState.score[1];
-      document.getElementById('cm-possession').innerText = cmState.possession === 0 ? 'Posesión: Local' : 'Posesión: Visitante';
-      document.getElementById('cm-zone-bar').style.width = cmState.zone + '%';
-      document.getElementById('cm-zone-label').innerText = `Zona: ${cmState.zone.toFixed(0)}m`;
-
-      const handContainer = document.getElementById('cm-hand-cards');
-      handContainer.innerHTML = '';
-      cmState.hand.forEach((card, idx) => {
-        const c = document.createElement('button');
-        c.className = 'control-btn';
-        c.style.flexDirection = 'column';
-        c.style.padding = '0.75rem';
-        c.style.height = 'auto';
-        c.style.textAlign = 'center';
-        c.innerHTML = `
-          <div style="font-size:0.7rem; color:var(--accent-gold); font-weight:700;">${card.skill} +${card.power}</div>
-          <div style="font-size:0.85rem; font-weight:800; margin:0.25rem 0;">${card.name}</div>
-          <div style="font-size:0.65rem; color:var(--text-muted);">${card.attack ? 'Ofensiva' : 'Defensiva'}</div>
-        `;
-        c.onclick = () => playTacticalCard(idx);
-        handContainer.appendChild(c);
-      });
-    }
-
-    // --- TAB 3: TACTICS & FORMATIONS ---
-    let formationsData = {};
-    let currentFormationKey = '4-3-3';
-
-    async function loadFormations() {
-      try {
-        const resp = await fetch('./data/formations.json');
-        formationsData = await resp.json();
-        renderFormationButtons();
-        renderTacticsBoard(currentFormationKey);
-      } catch (e) {
-        console.warn('Could not load formations:', e);
-      }
-    }
-
-    function renderFormationButtons() {
-      const btnContainer = document.getElementById('formation-buttons');
-      btnContainer.innerHTML = '';
-      Object.keys(formationsData).forEach(key => {
-        const btn = document.createElement('button');
-        btn.className = 'control-btn' + (key === currentFormationKey ? ' active' : '');
-        btn.innerText = key;
-        btn.onclick = () => {
-          currentFormationKey = key;
-          document.querySelectorAll('#formation-buttons .control-btn').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          renderTacticsBoard(key);
-        };
-        btnContainer.appendChild(btn);
-      });
-    }
-
-    function renderTacticsBoard(fKey) {
-      const f = formationsData[fKey];
-      if (!f) return;
-
-      document.getElementById('tactics-style-name').innerText = `Estilo: ${f.style}`;
-      const modEntries = Object.entries(f.mod || {});
-      const modText = modEntries.length ? modEntries.map(([k, v]) => `${v>0?'+':''}${v} ${k}`).join(', ') : 'Ninguno';
-      document.getElementById('tactics-modifiers').innerText = `Modificadores: ${modText}`;
-
-      const board = document.getElementById('tactics-board');
-      board.querySelectorAll('.pitch-player-pin').forEach(p => p.remove());
-
-      // Goalkeeper
-      addPinToBoard(board, 'Buffon', 'POR', 1, 50, 90);
-
-      // Defenses
-      f.DEF.forEach((pos, i) => {
-        addPinToBoard(board, `DEF ${i+1}`, f.P[i], i+2, pos[0]/64*100, pos[1]/88*100);
-      });
-
-      // Midfielders
-      const defCount = f.DEF.length;
-      f.MED.forEach((pos, i) => {
-        const idx = defCount + i;
-        addPinToBoard(board, `MED ${i+1}`, f.P[idx], idx+2, pos[0]/64*100, pos[1]/88*100);
-      });
-
-      // Attackers
-      const medCount = f.MED.length;
-      f.DEL.forEach((pos, i) => {
-        const idx = defCount + medCount + i;
-        addPinToBoard(board, `DEL ${i+1}`, f.P[idx], idx+2, pos[0]/64*100, pos[1]/88*100);
-      });
-    }
-
-    function addPinToBoard(board, name, role, num, xPct, yPct) {
-      const pin = document.createElement('div');
-      pin.className = 'pitch-player-pin';
-      pin.style.left = `${xPct}%`;
-      pin.style.top = `${yPct}%`;
-      pin.innerHTML = `
-        <div class="pin-num">${num}</div>
-        <div class="pin-pos">${role}</div>
-        <div class="pin-label">${role}</div>
-      `;
-      board.appendChild(pin);
-    }
-
-    // --- TAB 4: PACK OPENER ---
-    let fullPlayersList = [];
-
-    async function openPack(type) {
-      if (!fullPlayersList.length) return;
-      playSound('buzz');
-
-      const area = document.getElementById('opened-cards-area');
-      area.innerHTML = '<div style="color:#ffd700; font-size:1.1rem; font-weight:700; margin:2rem auto;">¡Abriendo sobre... Revelando cartas!</div>';
-
-      setTimeout(() => {
-        area.innerHTML = '';
-        const picked = [];
-        for (let i = 0; i < 5; i++) {
-          let pool = fullPlayersList;
-          if (type === 'premium') {
-            pool = fullPlayersList.filter(p => p.ovr >= 74);
-          }
-          const p = pool[Math.floor(Math.random() * pool.length)];
-          picked.push(p);
-        }
-
-        playSound('cheerW');
-
-        picked.forEach(p => {
-          const card = createCardDOM(p);
-          area.appendChild(card);
-        });
-      }, 700);
-    }
-
-    // --- TAB 5: ROSTER (168 PLAYERS) ---
-    let currentPosFilter = 'ALL';
-
-    async function loadFullRoster() {
-      try {
-        const resp = await fetch('./data/players_full.json');
-        fullPlayersList = await resp.json();
-        renderRoster();
-      } catch (e) {
-        console.warn('Could not load full roster:', e);
-      }
-    }
-
-    function createCardDOM(p) {
-      const card = document.createElement('div');
-      card.className = `fc-card tier-${p.tierId || 'reserva'}`;
-      card.innerHTML = `
-        <div class="card-top">
-          <div>
-            <div class="card-rating">${p.ovr}</div>
-            <div class="card-pos">${p.posDetailed || p.pos}</div>
-          </div>
-          <div class="card-badge">${p.tierName || 'Reserva'}</div>
-        </div>
-        <div class="card-player-name" title="${p.name}">${p.name}</div>
-        <div class="card-meta-line">
-          <span>${p.flag || '🏳️'} ${p.countryName || p.country}</span>
-          <span>•</span>
-          <span style="color:#ffd700;">${(p.value/1000000).toFixed(1)} M€</span>
-        </div>
-        <div class="card-stats-grid">
-          <div><div class="stat-val">${p.stats.VEL || 50}</div><div class="stat-lbl">VEL</div></div>
-          <div><div class="stat-val">${p.stats.REG || 50}</div><div class="stat-lbl">REG</div></div>
-          <div><div class="stat-val">${p.stats.PAS || 50}</div><div class="stat-lbl">PAS</div></div>
-          <div><div class="stat-val">${p.stats.TIR || 50}</div><div class="stat-lbl">TIR</div></div>
-          <div><div class="stat-val">${p.stats.DEF || 50}</div><div class="stat-lbl">DEF</div></div>
-          <div><div class="stat-val">${p.stats.FIS || 50}</div><div class="stat-lbl">FIS</div></div>
-        </div>
-        ${p.spd ? `<div class="card-speed-badge">⚡ ${p.spd} km/h ${p.spdSrc ? '(Dato Oficial)' : ''}</div>` : ''}
-      `;
-      return card;
-    }
-
-    function renderRoster() {
-      const grid = document.getElementById('cards-roster-grid');
-      const query = (document.getElementById('roster-search').value || '').toLowerCase();
-      grid.innerHTML = '';
-
-      const filtered = fullPlayersList.filter(p => {
-        const matchPos = currentPosFilter === 'ALL' || p.pos.includes(currentPosFilter);
-        const matchQuery = p.name.toLowerCase().includes(query) || (p.posDetailed && p.posDetailed.toLowerCase().includes(query)) || p.countryName.toLowerCase().includes(query);
-        return matchPos && matchQuery;
-      });
-
-      filtered.slice(0, 36).forEach(p => {
-        grid.appendChild(createCardDOM(p));
-      });
-    }
-
-    function setPosFilter(pos, btn) {
-      currentPosFilter = pos;
-      document.querySelectorAll('.cards-filter-bar .control-btn').forEach(b => b.classList.remove('active'));
-      if (btn) btn.classList.add('active');
-      renderRoster();
-    }
-
-    function filterRoster() {
-      renderRoster();
-    }
-
-    // --- TAB 6: SPECIAL CARDS ---
-    async function loadSpecials() {
-      try {
-        const resp = await fetch('./data/specials.json');
-        const specials = await resp.json();
-        const grid = document.getElementById('specials-grid');
-        grid.innerHTML = '';
-
-        Object.entries(specials).forEach(([key, card]) => {
-          const item = document.createElement('div');
-          item.className = 'special-card';
-          item.innerHTML = `
-            <div class="special-card-title">
-              <span>✨ ${card.name}</span>
-              <span style="font-size:0.7rem; color:var(--accent-purple); font-family:var(--font-mono);">${card.roles && card.roles.length ? card.roles.join(', ').toUpperCase() : 'EVENTO'}</span>
-            </div>
-            <div style="font-size:0.8rem; color:#cbd5e1; line-height:1.4;">${card.text || card.short || ''}</div>
-            <div style="font-family:var(--font-mono); font-size:0.68rem; color:var(--accent-gold); margin-top:auto;">ID: ${key}</div>
-          `;
-          grid.appendChild(item);
-        });
-      } catch (e) {
-        console.warn('Could not load specials:', e);
-      }
-    }
-
-    // --- TAB 7: AUDIO SOUNDBOARD ---
-    async function loadSoundboard() {
-      try {
-        const resp = await fetch('./audio/manifest.json');
-        const manifest = await resp.json();
-        const grid = document.getElementById('soundboard-grid');
-        grid.innerHTML = '';
-
-        Object.entries(manifest).slice(0, 36).forEach(([key, info]) => {
-          const btn = document.createElement('button');
-          btn.className = 'sound-btn';
-          btn.innerHTML = `
-            <div class="sound-name">▶ ${key}</div>
-            <div class="sound-type">${info.file} (${Math.round(info.bytes/1024)} KB)</div>
-          `;
-          btn.onclick = () => {
-            playSound(key, btn);
-          };
-          grid.appendChild(btn);
-        });
-      } catch (e) {
-        console.warn('Could not load manifest:', e);
-      }
-    }
-
-    function playSound(key, btn) {
-      try {
-        const audio = new Audio(`./audio/${key}.mp3`);
-        audio.play().then(() => {
-          if (btn) {
-            btn.classList.add('playing');
-            audio.onended = () => btn.classList.remove('playing');
-          }
-        }).catch(() => {});
-      } catch (err) {}
-    }
-
-    // INITIALIZATION
-    window.addEventListener('DOMContentLoaded', () => {
-      init3D();
-      startCardMatch();
-      loadFormations();
-      loadFullRoster();
-      loadSpecials();
-      loadSoundboard();
-    });
-  </script>
+    <div style="background:var(--surface);border-radius:var(--radius);padding:1rem;font-size:.8rem;line-height:1.6;color:var(--muted2)">
+      ${s.text}
+    </div>`;
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+}
+document.getElementById('modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('modal')) closeModal();
+});
+</script>
 </body>
 </html>

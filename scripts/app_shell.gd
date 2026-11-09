@@ -41,7 +41,7 @@ func _packs()->void:
  _button("ABRIR SOBRE",func():var pack=EconomyService.open_pack(rng);info.text="\n".join(pack.map(func(c):return "%s · %s · %s"%[c.rarity,c.pos,c.ovr])))
  _button("CANJEAR 30 FICHAS → ÉPICA",func():EconomyService.craft("E");_packs());_button("← VOLVER",func():nav.go(&"home"))
 func _match()->void:
- title.text="PARTIDO";var s:=coordinator.state
+ title.text="PARTIDO";var s:Dictionary=coordinator.state
  if s.is_empty():s=coordinator.begin(rng.randi())
  info.text="%02d'   LOCAL %d - %d RIVAL\nPosesión: %s · Energía %.0f%%"%[s.minute,s.score[0],s.score[1],"LOCAL" if s.possession==0 else "RIVAL",s.energy[0]]
  for a in CoreRules.ATTACK:_button(str(a).capitalize(),func(action=a):coordinator.player_action(action);_match())

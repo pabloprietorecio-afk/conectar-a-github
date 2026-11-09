@@ -1,6 +1,6 @@
 extends Node3D
 
-var match := CardMatch.new()
+var card_match := CardMatch.new()
 var buttons: Array[Button] = []
 @onready var player: PlayerAvatar = $Player
 @onready var weather: WeatherController = $Weather
@@ -11,20 +11,20 @@ var buttons: Array[Button] = []
 
 func _ready() -> void:
     GameState.start_match()
-    match.changed.connect(_render)
-    match.finished.connect(_match_finished)
-    match.start(int(GameState.current_match.seed))
+    card_match.changed.connect(_render)
+    card_match.finished.connect(_match_finished)
+    card_match.start(int(GameState.current_match.seed))
     for i in 5:
         var b := Button.new()
         b.custom_minimum_size = Vector2(180, 150)
         b.pressed.connect(_play.bind(i))
         cards.add_child(b)
         buttons.append(b)
-    _render(match.snapshot())
+    _render(card_match.snapshot())
 
 func _play(index: int) -> void:
     player.set_motion(5.8)
-    match.play_card(index)
+    card_match.play_card(index)
 
 func _render(s: Dictionary) -> void:
     status.text = "%02d'     LOCAL %d  ·  %d RIVAL     %s" % [s.minute, s.score[0], s.score[1], "POSESIÓN" if s.possession == 0 else "DEFENSA"]
@@ -48,4 +48,4 @@ func _on_weather_pressed() -> void:
     weather.set_weather(next, 0.7)
 
 func _on_action_pressed() -> void:
-    match.start(int(Time.get_unix_time_from_system()))
+    card_match.start(int(Time.get_unix_time_from_system()))
